@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="animasjoner.css">
+</head>
+<body>
+    <nav>
+        <a href="../index.html">Tilbake til hovedmenyen</a>
+    </nav>
+    <section id="main">
+        <div onclick="animasjon1()">
+            knapp for 1 
+        </div>
+        <div onclick="animasjon2()">
+            knapp for 2
+        </div>
+        <div>
+            <svg viewBox="-50 -50 100 100" id="animasjon1">
+
+            </svg>
+        </div>
+        <div>
+            <svg viewBox="0 0 100 100" id="animasjon2">
+
+            </svg>
+        </div>
+        <div onclick="animasjon3()">
+            knapp for 3
+        </div>
+        <div onclick="animasjon4()">
+            knapp for 4
+
+        </div>
+        <div>
+            <svg viewBox="0 0 100 100" id="animasjon3">
+
+            </svg>
+        </div>
+        <div>
+            <svg viewBox="0 0 100 100" id="animasjon4">
+                <rect x="25" y="25" width="50" height="50" fill="skyblue"/>
+
+            </svg>
+        </div>
+    </section>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="animasjoner.js"></script>
+</body>
+</html>
