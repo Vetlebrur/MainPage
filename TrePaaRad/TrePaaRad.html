@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tre På Rad</title>
+    <link rel="stylesheet" href="css/TREPAARAD.css">
+</head>
+<body>
+    <section id="main">
+        <h1>
+            TRE PÅ RAD
+        </h1>
+        <div id="veiledendeTekst">Det er <b><span id="identitetAvSpiller">X</span></b> sin tur.</div>
+        <table id="bord">
+            <tbody id="spillBrett">
+                
+                <tr onclick="plasser(this)" id="felt1">
+                    <td id="rute1">    
+                    </td>
+                </tr>
+                <tr onclick="plasser(this)" id="felt2">
+                    <td id="rute2">
+                    </td>
+                </tr>
+                <tr onclick="plasser(this)" id="felt3">
+                    <td id="rute3">
+                    </td>
+                </tr>
+                <tr onclick="plasser(this)" id="felt4">
+                    <td id="rute4">
+                    </td>
+                </tr>
+                <tr onclick="plasser(this)" id="felt5">
+                    <td id="rute5">
+                    </td>
+                </tr>
+                <tr onclick="plasser(this)" id="felt6">
+                    <td id="rute6">
+                    </td>
+                </tr>
+                <tr onclick="plasser(this)" id="felt7">
+                    <td id="rute7">
+                    </td>
+                </tr>
+                <tr onclick="plasser(this)" id="felt8">
+                    <td id="rute8">
+                    </td>
+                </tr>
+                <tr onclick="plasser(this)" id="felt9">
+                    <td id="rute9">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div id="resetKnapp" onclick="resetBrett()">Reset</div>
+        <div id="score">X:<span id="xScore">0</span> <br>O:<span id="oScore">0</span> </div>
+    </section>
+    <script src="src/TREPAARAD.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</body>
+</html>

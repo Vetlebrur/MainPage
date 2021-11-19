@@ -1,0 +1,86 @@
+body{
+    background-color: bisque;
+}
+#main{
+    display:grid;
+    width:100vw;
+
+    grid-template-areas:
+    ". h h h ." 
+    ". a a c ."
+    "d b b b ."
+    "d b b b ."
+    ". b b b .";
+    grid-template-columns: 30% 15% 10% 15% 30%;
+    grid-template-rows: 100px 75px 200px 200px 200px;
+}
+h1{
+    grid-area:h;
+    font-size:40px;
+    text-align: center;
+}
+#main > div{
+    font-size: 40px;
+    text-align: center;
+}
+#veiledendeTekst{
+    grid-area:a;
+    padding:0.2em 0.5em ;
+    margin:0 auto;
+}
+#bord{
+    grid-area:b;
+}
+#score{
+    grid-area:d;
+    background:grey;
+    border:3px solid black;
+    border-radius: 10px;
+    padding:3em;
+    font-size: 60px;
+
+}
+#resetKnapp{
+    grid-area:c;
+    border:5px solid grey;
+    background-color:lightcoral;
+    border-radius:10px;
+    width: max-content;
+    padding:0.2em 0.5em;
+    margin:0 auto;
+
+}
+#spillBrett{
+    margin:auto;
+    height:75vh;
+    background:grey;
+    border:5px solid black;
+    border-collapse: collapse;
+    border-radius: 25px;
+    display: grid;
+    grid-template-columns:repeat(3,1fr);
+    grid-template-rows: repeat(3,1fr);
+}
+#spillBrett > tr{
+    border:3px solid black;
+    transition-duration: 0.4s;
+
+}
+#spillBrett > tr:hover{
+    box-shadow: 0 0 8px black;
+    background:darkgray;
+}
+
+#spillBrett > tr:nth-child(1){
+    border-top-left-radius:20px;
+}
+#spillBrett > tr:nth-child(3){
+    border-top-right-radius:20px;
+}
+#spillBrett > tr:nth-child(7){
+    border-bottom-left-radius:20px;
+}
+#spillBrett > tr:nth-child(9){
+    border-bottom-right-radius: 20px;
+}
+
