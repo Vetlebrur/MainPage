@@ -42,8 +42,10 @@ function animasjon3(){
     .transition().ease(d3.easeQuadOut).duration(500).attr("cy",50)
     .transition().ease(d3.easeQuadIn).duration(400).attr("cy",80)
     .transition().ease(d3.easeQuadOut).duration(300).attr("cy",60)
-    .transition().ease(d3.easeQuadIn).duration(200).attr("cy",80)
-    .transition().ease(d3.easeQuadOut).duration(150).attr("cy",70)
-    .transition().ease(d3.easeQuadIn).duration(150).attr("cy",80);
+    .transition().ease(d3.easeQuadIn).duration(250).attr("cy",80)
+    .transition().ease(d3.easeQuadOut).duration(200).attr("cy",70)
+    .transition().ease(d3.easeQuadIn).duration(150).attr("cy",80)
+    .transition().ease(d3.easeQuadOut).duration(100).attr("cy",75)
+    .transition().ease(d3.easeQuadIn).duration(100).attr("cy",80);
 
 }
