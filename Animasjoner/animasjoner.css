@@ -28,3 +28,8 @@ body{
 .knapp{
     background:red;
 }
+#boks4{
+    height:100%;
+    width:100%;
+    background:linear-gradient(45deg, cyan, violet)
+}

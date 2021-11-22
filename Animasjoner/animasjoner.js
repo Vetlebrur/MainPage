@@ -49,3 +49,22 @@ function animasjon3(){
     .transition().ease(d3.easeQuadIn).duration(100).attr("cy",80);
 
 }
+
+//const circle4 = document.getElementById("circle4");
+
+//document.getElementById("boks4").addEventListener('mousemove', animasjon4);
+
+const circle4 = d3.select(svg4).on("mousemove",animasjon4)
+.append("circle").attr("id","circle4")
+.attr("r",5).attr("fill","violet").attr("stroke","cyan").attr("stroke-width",1);
+
+function animasjon4(event){
+    var coordinates = d3.pointer(event);
+    var x = coordinates[0]
+    var y = coordinates[1]
+    document.getElementById("xVerdi").innerHTML = x;
+    document.getElementById("yVerdi").innerHTML = y;
+    d3.select("#circle4").attr("cx",x).attr("cy",y)
+  
+    
+}
