@@ -62,8 +62,8 @@ function animasjon4(event){
     var coordinates = d3.pointer(event);
     var x = coordinates[0]
     var y = coordinates[1]
-    document.getElementById("xVerdi").innerHTML = x;
-    document.getElementById("yVerdi").innerHTML = y;
+    document.getElementById("xVerdi").innerHTML = floor(x);
+    document.getElementById("yVerdi").innerHTML = floor(y);
     d3.select("#circle4").attr("cx",x).attr("cy",y)
   
     
