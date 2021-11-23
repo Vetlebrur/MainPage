@@ -48,7 +48,12 @@ h1{
     width: max-content;
     padding:0.2em 0.5em;
     margin:0 auto;
+    transition-duration: 0.4s;
 
+}
+#resetKnapp:hover{
+    background-color:rgb(233, 133, 75);
+    box-shadow: 0 0 10px black;
 }
 #spillBrett{
     margin:auto;
