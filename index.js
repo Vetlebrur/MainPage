@@ -1,3 +1,4 @@
+//bilde 1
 const svg1 = document.querySelector("#trePaaRad");
 
 d3.select(svg1).append("rect").attr("width",60).attr("height",60).attr("fill","lightgray").attr("x",20).attr("y",20).attr("stroke","black");
@@ -25,9 +26,13 @@ d3.select(svg2).append("rect").attr("id","himmel").attr("width",100).attr("heigh
 d3.select(svg2).append("rect").attr("y",70).attr("width",100).attr("height",30).attr("fill","#348C31");
 d3.select(svg2).append("circle").attr("id","sol").attr("cx",20).attr("cy",30).attr("r",10).attr("fill","yellow");
 d3.select(svg2).append("circle").attr("id","maane").attr("cx",-80).attr("cy",30).attr("r",10).attr("fill","lightgray");
+d3.select(svg2).append("rect").attr("y",60).attr("x",45).attr("width",10).attr("height",20).attr("fill","brown");
+d3.select(svg2).append("path").attr("d","M30 60 70 60 50 30").attr("fill","green");
+d3.select(svg2).append("path").attr("d","M32 50 68 50 50 20").attr("fill","green");
+d3.select(svg2).append("path").attr("d","M34 40 66 40 50 10").attr("fill","green");
 
 
-
+//bilde 2
 svg2.addEventListener("mouseover",svg2ani);
 
 function svg2ani(){
@@ -59,3 +64,5 @@ function stop(){
     d3.select("#himmel").interrupt()
     .attr("fill","skyblue");
 }
+
+//bilde 3
