@@ -51,7 +51,6 @@ function svg2ani(){
     .transition().duration(1500).attr("fill","black")
     .transition().duration(1500).attr("fill","skyblue")
     .on('end', svg2ani);
-    
 }
 
 svg2.addEventListener("mouseout",stop)
