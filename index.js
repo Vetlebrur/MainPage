@@ -19,7 +19,7 @@ d3.select(svg1).append("circle").attr("cx",30).attr("cy",70).attr("r",7).attr("f
 d3.select(svg1).append("circle").attr("cx",70).attr("cy",50).attr("r",7).attr("fill","none").attr("stroke","black").attr("stroke-width",2);
 
 
-
+//bilde 2
 const svg2 = document.querySelector("#omMeg");
 
 d3.select(svg2).append("rect").attr("id","himmel").attr("width",100).attr("height",70).attr("fill","skyblue");
@@ -32,7 +32,7 @@ d3.select(svg2).append("path").attr("d","M32 50 68 50 50 20").attr("fill","green
 d3.select(svg2).append("path").attr("d","M34 40 66 40 50 10").attr("fill","green");
 
 
-//bilde 2
+
 svg2.addEventListener("mouseover",svg2ani);
 
 function svg2ani(){
@@ -53,15 +53,20 @@ function svg2ani(){
     .on('end', svg2ani);
 }
 
-svg2.addEventListener("mouseout",stop)
-
-function stop(){
+svg2.addEventListener("mouseout",() =>{
     d3.select("#sol").interrupt()
     .attr("cx",20);
     d3.select("#maane").interrupt()
     .attr("cx",-80);
     d3.select("#himmel").interrupt()
     .attr("fill","skyblue");
-}
+});
 
 //bilde 3
+const svg3 = document.querySelector("#flappyBird");
+
+d3.select(svg3).append("rect").attr("id","himmelFlappy").attr("width",100).attr("height",70).attr("fill","skyblue");
+d3.select(svg3).append("rect").attr("y",70).attr("width",100).attr("height",30).attr("fill","#348C31");
+d3.select(svg3).append("rect").attr("x",70).attr("y",0).attr("width",15).attr("height",30).attr("fill","lime");
+d3.select(svg3).append("rect").attr("x",70).attr("y",60).attr("width",15).attr("height",60).attr("fill","lime");
+d3.select(svg3).append("circle").attr("cx",30).attr("cy",50).attr("r",5).attr("fill","yellow")
