@@ -67,6 +67,24 @@ const svg3 = document.querySelector("#flappyBird");
 
 d3.select(svg3).append("rect").attr("id","himmelFlappy").attr("width",100).attr("height",70).attr("fill","skyblue");
 d3.select(svg3).append("rect").attr("y",70).attr("width",100).attr("height",30).attr("fill","#348C31");
-d3.select(svg3).append("rect").attr("x",70).attr("y",0).attr("width",15).attr("height",30).attr("fill","lime");
-d3.select(svg3).append("rect").attr("x",70).attr("y",60).attr("width",15).attr("height",60).attr("fill","lime");
-d3.select(svg3).append("circle").attr("cx",30).attr("cy",50).attr("r",5).attr("fill","yellow")
+
+d3.select(svg3).append("rect").attr("id","pipeTopp").attr("x",80).attr("y",0).attr("width",15).attr("height",30).attr("fill","lime");
+d3.select(svg3).append("rect").attr("id","pipeBunn").attr("x",80).attr("y",60).attr("width",15).attr("height",60).attr("fill","lime");
+
+d3.select(svg3).append("circle").attr("id","fugl").attr("cx",30).attr("cy",50).attr("r",5).attr("fill","yellow");
+
+
+svg3.addEventListener("mouseover",svg3ani);
+function svg3ani(){
+    d3.select("#pipeTopp").transition().ease(d3.easeLinear).duration(700).attr("x",35);
+    d3.select("#pipeBunn").transition().ease(d3.easeLinear).duration(700).attr("x",35);
+}
+
+svg3.addEventListener("mouseout",() =>{
+    d3.select("#fugl").interrupt()
+    .attr("cy",50);
+    d3.select("#pipeBunn").interrupt()
+    .attr("x",80);
+    d3.select("#pipeTopp").interrupt()
+    .attr("x",80);
+});
