@@ -1,0 +1,41 @@
+*{
+    margin:0;
+}
+h1{
+    font-size: 60px;
+    background:red;
+    margin:10px auto;
+    padding:0.5em 1em;
+}
+#wrapper{
+    width: 100%;
+    background:pink;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+
+
+}
+#input{
+   background:orange;
+   padding:2em;
+   width:40%;
+   height:20vh;
+
+}
+#formelInput{
+    width:100%;
+
+}
+#button{
+    font-size: 40px;
+    margin:10px auto;
+    text-align: center;
+    border:2px solid grey;
+    background:lightgray;
+
+}
+#formeloutput{
+    background:white;
+}

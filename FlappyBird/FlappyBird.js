@@ -11,7 +11,7 @@ var holeStart = Math.floor(Math.random() * 400) + 200;
 var holeEnd = (holeStart + 300);
 var a = 0;
 function falling(){
-    d3.select("#bird").transition().duration(600).ease(d3.easeQuadIn).attr("cy",1000).on("end",falling);
+    d3.select("#bird").transition().duration(700).ease(d3.easeQuadIn).attr("cy",1000).on("end",falling);
 }
 
 d3.select(svgWindow).append("rect").attr("id","pipeTop");
