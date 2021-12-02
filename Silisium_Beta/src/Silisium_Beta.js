@@ -6,7 +6,12 @@ outputEl = document.querySelector("#formelOutput");
 function calculate(){
     let equation = inputEl.value.replaceAll(" ","").toLowerCase();
     if(equation == ""){
-        alert("insert values")
+        alert("insert values");
+        return;
+
+    }
+    else if (equation.includes("alert")){
+        alert("error")
         return;
 
     }
