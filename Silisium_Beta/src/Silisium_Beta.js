@@ -10,10 +10,9 @@ function calculate(){
         return;
 
     }
-    else if (equation.includes("alert")){
+    else if ((equation.includes("alert")) || (equation.includes("console"))){
         alert("error")
         return;
-
     }
     var newEquation = equation.replaceAll("one",1).replaceAll("two",2).replaceAll("three",3).replaceAll("four",4)
     .replaceAll("five",5).replaceAll("six",6).replaceAll("seven",7).replaceAll("eight",8).replaceAll("nine",9).replaceAll("ten",10)
