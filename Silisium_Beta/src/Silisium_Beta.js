@@ -1,6 +1,27 @@
 inputEl = document.querySelector("#formelInput");
 btnEl = document.querySelector("#button");
 outputEl = document.querySelector("#formelOutput");
+const months =["january","february","march","april","may","june","july","august","september","october","november","december"];
+
+
+document.body.onkeydown = function(e){
+    if(e.keyCode == 13){
+        understandInput()
+    }
+}
+
+
+function understandInput(){
+    let input = inputEl.value.toLowerCase();
+    if (months.some(v => input.includes(v))){
+        doomsdayAlgorithm()
+    }
+    else{
+        calculate()
+    }
+}
+
+
 
 function calculate(){
     let equation = inputEl.value.replaceAll(" ","").replaceAll("=","").toLowerCase();
@@ -24,6 +45,162 @@ function calculate(){
         alert("error");
     }
     
+}
+
+
+
+
+//The doomsday method for calculating all dates 
+function doomsdayAlgorithm(){
+    let date = inputEl.value.toLowerCase().replaceAll(" ","").replaceAll("st","").replaceAll("date","")
+    .replaceAll("nd","").replaceAll("rd","").replaceAll("th","").replaceAll("of","");
+    var day, specialDay, weekDay, dayOfWeek, year, month, leapYear, century;
+
+    //year
+    year = Number(date.slice(-4));
+
+    //month
+    for (let i = 0; i < months.length; i++) {
+        let candidateMonth = months[i];
+        if (date.includes(candidateMonth)){
+            month = candidateMonth;
+        }  
+    }
+
+    //day
+    day = Number(date.slice(0,2));
+    if (day){
+    }
+    else{
+        day = Number(date.slice(0,1));
+    }
+
+    //leap Year
+    if (year%4 == 0){
+        leapYear = true;
+    }
+    else{
+        leapYear = false;
+    }
+
+    //Doomsday of each year
+    century = Math.floor(year/100);
+    
+    if (century%4 == 0){
+        weekDay = 2;
+    }
+    else if (century%4 == 1){
+        weekDay = 0;
+    }
+    else if (century%4 == 2){
+        weekDay = 5;
+    }
+    else if (century%4 == 3){
+        weekDay = 3;
+    }
+
+    weekDay +=(year%100);
+    weekDay += ((year%100)/4);
+    weekDay = weekDay%7;
+    weekDay = Math.floor(weekDay);
+    
+    //doomsday of each month
+    switch (month){
+        case "january":
+            if (leapYear){
+                specialDay = 4;
+            }
+            else{
+                specialDay = 3;
+            }
+
+            break;
+
+        case "february":
+            if (leapYear){
+                specialDay = 29;
+            }
+            else{
+                specialDay = 28;
+            }
+
+            break;
+
+        case "march":
+            specialDay = 14;
+            break;
+
+        case "april":
+            specialDay = 4;
+            break;
+
+        case "may":
+            specialDay = 9;
+            break;
+
+        case "june":
+            specialDay = 6;
+            break;
+    
+        case "july":
+            specialDay = 11;
+            break;
+
+        case "august":
+            specialDay = 8;
+            break;
+
+        case "september":
+            specialDay = 5;
+            break;
+
+        case "october":
+            specialDay = 10;
+            break;
+        
+        case "november":
+            specialDay = 7;
+            break;
+
+        case "december":
+            specialDay = 12;
+            break;   
+    }
+    
+    weekDay += day;
+    weekDay -= specialDay;
+    if(weekDay < 0){
+        while (weekDay < 0){
+            weekDay+=7;
+        }
+    }
+    weekDay = weekDay%7;
+    
+    //number to day
+    switch (weekDay){
+        case 0:
+            dayOfWeek = "Sunday";
+            break;
+        case 1:
+            dayOfWeek = "Monday";
+            break;
+        case 2: 
+            dayOfWeek = "Tuesday";
+            break;
+        case 3:
+            dayOfWeek = "Wednesday";
+            break;
+        case 4:
+            dayOfWeek = "Thursday";
+            break;
+        case 5:
+            dayOfWeek = "Friday";
+            break;
+        case 6:
+            dayOfWeek= "Saturday";
+            break;
+    }
+    outputEl.innerHTML= `the date falls on a ${dayOfWeek}!`;
 }
 
 
