@@ -14,7 +14,7 @@ var boxPositionY = startPosition[1];
 var mainChar = d3.select(screenEl).append("rect").attr("id","mainCharacter")
 .attr("width",100).attr("height",100)
 .attr("x",-100).attr("y",startPosition[1])
-.attr("fill","red").on("click",play);
+.attr("fill","red").append("rect").attr("width",80).attr("height",20).attr("fill","black");
 
 var platform, ground;
 
