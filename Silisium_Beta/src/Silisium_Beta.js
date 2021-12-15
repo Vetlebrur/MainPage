@@ -24,11 +24,15 @@ function understandInput(){
 
 
 function calculate(){
+    outputEl.innerHTML = "";
     let equation = inputEl.value.replaceAll(" ","").replaceAll("=","").toLowerCase();
     if(equation == ""){
         alert("insert values");
         return;
-
+    }
+    else if ((equation.toLowerCase().includes("christmastree"))|| (equation.toLowerCase().includes("primes"))){
+        eval(equation);
+        return;
     }
     else if ((equation.includes("alert")) || (equation.includes("console"))){
         alert("error")
@@ -44,7 +48,6 @@ function calculate(){
     catch{
         alert("error");
     }
-    
 }
 
 
@@ -203,6 +206,43 @@ function doomsdayAlgorithm(){
     outputEl.innerHTML= `the date falls on a ${dayOfWeek}!`;
 }
 
+function christmastree(num){
+    let n = Number(num);
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j <= i; j++) {
+            let random = Math.random()
+            if (j == 0 && i == 0){
+                outputEl.innerHTML += "☆";
+            }
+            else if (random>0.8){
+                outputEl.innerHTML += " #";
+            }
+            else{
+                outputEl.innerHTML += " *";
+            }
+        }
+        outputEl.innerHTML += "<br>";
+    }
+    outputEl.style.textAlign = "center";
+    outputEl.style.backgroundColor = "green";
+
+}
+
+function primes(num){
+    let primeFactors = [];
+    let n = Number(num);
+    let factoredN = n;
+    for (let i = 2; i < n/2; i++) {
+        if(factoredN%i == 0){
+            
+            while (factoredN%i == 0){
+                primeFactors.push(i);
+                factoredN = factoredN/i;
+            }
+        } 
+    } 
+    outputEl.innerHTML = `Factors of ${n}: ${primeFactors}`;
+}
 
 //function calculate(){
 //    let equation = inputEl.value.replaceAll(" ","").toLowerCase();
