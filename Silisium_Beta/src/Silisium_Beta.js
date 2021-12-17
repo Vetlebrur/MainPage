@@ -30,7 +30,9 @@ function calculate(){
         alert("insert values");
         return;
     }
-    else if ((equation.toLowerCase().includes("christmastree"))|| (equation.toLowerCase().includes("primes"))){
+    else if ((equation.toLowerCase().includes("christmastree"))||
+        (equation.toLowerCase().includes("primes"))||
+        (equation.toLowerCase().includes("fizzbuzz"))){
         eval(equation);
         return;
     }
@@ -230,20 +232,43 @@ function christmastree(num){
 
 function primes(num){
     let primeFactors = [];
+    let factorizedNumber = [];
     let n = Number(num);
     let factoredN = n;
-    for (let i = 2; i < n/2; i++) {
+    for (let i = 2; i < Math.sqrt(n); i++) {
         if(factoredN%i == 0){
-            
-            while (factoredN%i == 0){
+            if(!primeFactors.includes(i)){
                 primeFactors.push(i);
+            }
+            while (factoredN%i == 0){
+                factorizedNumber.push(i);
                 factoredN = factoredN/i;
             }
         } 
     } 
-    outputEl.innerHTML = `Factors of ${n}: ${primeFactors}`;
+    if (factoredN != 1){
+        factorizedNumber.push(factoredN);
+        primeFactors.push(factoredN);
+    }
+    outputEl.innerHTML = `Factors of ${n}: ${factorizedNumber}`;
 }
 
+function fizzbuzz(num){
+    let n = Number(num);
+    for (let i = 1; i <= n; i++) {
+        let value = i;
+        if (i%15 == 0){
+            value = "fizzbuzz <br>";
+        }
+        else if (i%3 == 0){
+            value = "fizz ";
+        }
+        else if (i%5 == 0){
+            value = "buzz";
+        }
+        outputEl.innerHTML += value+" "; 
+    }
+}
 //function calculate(){
 //    let equation = inputEl.value.replaceAll(" ","").toLowerCase();
 //    let equationLength = equation.length;
