@@ -6,7 +6,7 @@ const months =["january","february","march","april","may","june","july","august"
 
 document.body.onkeydown = function(e){
     if(e.keyCode == 13){
-        understandInput()
+        btnEl.click();
     }
 }
 
