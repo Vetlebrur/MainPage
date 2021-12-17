@@ -10,8 +10,7 @@ document.body.onkeydown = function(e){
     }
 }
 
-
-function understandInput(){
+btnEl.addEventListener("click", ()=> {
     let input = inputEl.value.toLowerCase();
     if (months.some(v => input.includes(v))){
         doomsdayAlgorithm()
@@ -19,7 +18,8 @@ function understandInput(){
     else{
         calculate()
     }
-}
+});
+
 
 
 
@@ -255,19 +255,9 @@ function primes(num){
 
 function fizzbuzz(num){
     let n = Number(num);
-    for (let i = 1; i <= n; i++) {
-        let value = i;
-        if (i%15 == 0){
-            value = "fizzbuzz <br>";
-        }
-        else if (i%3 == 0){
-            value = "fizz ";
-        }
-        else if (i%5 == 0){
-            value = "buzz";
-        }
-        outputEl.innerHTML += value+" "; 
-    }
+    for (let i = 1; i <= n; i++){
+        let value = (i%3 != 0)? ((i%5 != 0)? i : "buzz"): (i%15 != 0)? "fizz":"fizzbuzz";  
+        outputEl.innerHTML += value+"<br>";}
 }
 //function calculate(){
 //    let equation = inputEl.value.replaceAll(" ","").toLowerCase();
