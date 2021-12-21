@@ -1,6 +1,6 @@
-inputEl = document.querySelector("#formelInput");
+inputEl = document.querySelector("#formulaInput");
 btnEl = document.querySelector("#button");
-outputEl = document.querySelector("#formelOutput");
+outputEl = document.querySelector("#formulaOutput");
 const months =["january","february","march","april","may","june","july","august","september","october","november","december"];
 
 
@@ -11,41 +11,58 @@ document.body.onkeydown = function(e){
 }
 
 btnEl.addEventListener("click", ()=> {
+    outputEl.innerHTML = "";
     let input = inputEl.value.toLowerCase();
-    if (months.some(v => input.includes(v))){
-        doomsdayAlgorithm()
+    if(input == ""){
+        alert("insert values");
+    }
+    else if ((input.includes("alert")) || (input.includes("console"))){
+        alert("error");
+    }
+    else if(input.includes("(") && !input.includes("sq")){
+        try{
+            eval(input);
+        }
+        catch{
+            alert("error");
+            
+        }
+    }
+    
+    else if(months.some(v => input.includes(v))){
+        doomsdayAlgorithm();
     }
     else{
-        calculate()
+        calculate(input);
     }
+    
 });
 
+function calculate(equation){
 
+    let items = {
+        "twen":2,"thir":3,"fif":5,"eigh":8,"teen":"+10","zero":0,
+        "one": 1,"two": 2,"three":3,"four":4,"five":5,"six":6,"seven":7,
+        "eight":8,"nine":9,"ten":10,"eleven":11,"twelve":12,"ty":"*10+",
+        "hundred":"*100","thousand":"*1000",
 
-
-function calculate(){
-    outputEl.innerHTML = "";
-    let equation = inputEl.value.replaceAll(" ","").replaceAll("=","").toLowerCase();
-    if(equation == ""){
-        alert("insert values");
-        return;
+        " ":"","=":"","of":"","by":"","the":"","and":"+","plus":"+",
+        "minus":"-","divided":"/","times":"*","power":"**","^":"**",
+        "sqrt(":"Math.sqrt(","squareroot(":"Math.sqrt(",
     }
-    else if ((equation.toLowerCase().includes("christmastree"))||
-        (equation.toLowerCase().includes("primes"))||
-        (equation.toLowerCase().includes("fizzbuzz"))){
-        eval(equation);
-        return;
-    }
-    else if ((equation.includes("alert")) || (equation.includes("console"))){
-        alert("error")
-        return;
-    }
-    var newEquation = equation.replaceAll("one",1).replaceAll("two",2).replaceAll("three",3).replaceAll("four",4)
-    .replaceAll("five",5).replaceAll("six",6).replaceAll("seven",7).replaceAll("eight",8).replaceAll("nine",9).replaceAll("ten",10)
-    .replaceAll("^","**").replaceAll("plus","+").replaceAll("times","*").replaceAll("power","**").replaceAll("sqrt","Math.sqrt");
 
+    let newEquation = equation;
+    for (let i = 0; i < Object.keys(items).length; i++) {
+        let word = Object.keys(items)[i];
+        if (equation.includes(word)){
+            newEquation = newEquation.replaceAll(word, items[word]);
+        }
+    }
+    //alert(equation)
+    //alert(newEquation)
     try {
-        outputEl.innerHTML = `${newEquation.replaceAll("**","^")} = ${eval(newEquation)}`;
+        let solution = eval(newEquation); 
+        outputEl.innerHTML = `${equation} = ${solution}`;
     }
     catch{
         alert("error");
@@ -55,7 +72,7 @@ function calculate(){
 
 
 
-//The doomsday method for calculating all dates 
+//The doomsday method for calculating all weekdays for any dates 
 function doomsdayAlgorithm(){
     let date = inputEl.value.toLowerCase().replaceAll(" ","").replaceAll("st","").replaceAll("date","")
     .replaceAll("nd","").replaceAll("rd","").replaceAll("th","").replaceAll("of","");
@@ -208,8 +225,7 @@ function doomsdayAlgorithm(){
     outputEl.innerHTML= `the date falls on a ${dayOfWeek}!`;
 }
 
-function christmastree(num){
-    let n = Number(num);
+function christmastree(n){
     for (let i = 0; i < n; i++) {
         for (let j = 0; j <= i; j++) {
             let random = Math.random()
@@ -227,13 +243,16 @@ function christmastree(num){
     }
     outputEl.style.textAlign = "center";
     outputEl.style.backgroundColor = "green";
+    if (n>48){
+        outputEl.style.width = "100%";
+
+    }
 
 }
 
-function primes(num){
+function primes(n){
     let primeFactors = [];
     let factorizedNumber = [];
-    let n = Number(num);
     let factoredN = n;
     for (let i = 2; i < Math.sqrt(n); i++) {
         if(factoredN%i == 0){
@@ -250,60 +269,60 @@ function primes(num){
         factorizedNumber.push(factoredN);
         primeFactors.push(factoredN);
     }
-    outputEl.innerHTML = `Factors of ${n}: ${factorizedNumber}`;
+    outputEl.innerHTML = (factorizedNumber.length == 1)? `${n} is prime`:`Factors of ${n}: ${factorizedNumber}`;
 }
 
-function fizzbuzz(num){
-    let n = Number(num);
+function fizzbuzz(n){
     for (let i = 1; i <= n; i++){
         let value = (i%3 != 0)? ((i%5 != 0)? i : "buzz"): (i%15 != 0)? "fizz":"fizzbuzz";  
         outputEl.innerHTML += value+"<br>";}
 }
-//function calculate(){
-//    let equation = inputEl.value.replaceAll(" ","").toLowerCase();
-//    let equationLength = equation.length;
-//    if(equation.includes("+")){
-//        let symbolLocation = equation.indexOf("+");
-//        let a = Number(equation.slice(0,symbolLocation));
-//        let b = Number(equation.slice(symbolLocation+1,equationLength))
-//        outputEl.innerHTML = `${a} + ${b} = ${a+b}`;
-//    }
-//    else if(equation.includes("-")){
-//        let symbolLocation = equation.indexOf("-");
-//        let a = Number(equation.slice(0,symbolLocation));
-//        let b = Number(equation.slice(symbolLocation+1,equationLength))
-//        outputEl.innerHTML = `${a} - ${b} = ${a-b}`;
-//
-//    }
-//    else if(equation.includes("*")|| equation.includes("^")){
-//        if (equation.includes("**")){
-//            let symbolLocation = equation.indexOf("*");
-//            let a = Number(equation.slice(0,symbolLocation));
-//            let b = Number(equation.slice(symbolLocation+2,equationLength))
-//            outputEl.innerHTML = `${a} ^ ${b} = ${a**b}`;
-//        }
-//        else if(equation.includes("^")){
-//            let symbolLocation = equation.indexOf("^");
-//            let a = Number(equation.slice(0,symbolLocation));
-//            let b = Number(equation.slice(symbolLocation+1,equationLength))
-//            outputEl.innerHTML = `${a} ^ ${b} = ${a**b}`;
-//
-//        }
-//        else{
-//            let symbolLocation = equation.indexOf("*");
-//            let a = Number(equation.slice(0,symbolLocation));
-//            let b = Number(equation.slice(symbolLocation+1,equationLength))
-//            outputEl.innerHTML = `${a} * ${b} = ${a*b}`;
-//        }
-//    }
-//    else if(equation.includes("/")){
-//        let symbolLocation = equation.indexOf("/");
-//        let a = Number(equation.slice(0,symbolLocation));
-//        let b = Number(equation.slice(symbolLocation+1,equationLength))
-//        outputEl.innerHTML = `${a} / ${b} = ${a/b}`;
-//    }
-//
-//
-//
-//
-//}
+
+function collatz(n){
+    let steps = 0;
+    while (n != 1){
+        outputEl.innerHTML += `${n}-`;
+        n = (n%2 == 0)? n/2 : 3*n +1;
+        steps++;
+        
+
+    }
+    outputEl.innerHTML += `1 <br>${num} reaches 1 after ${steps} steps.`;
+}
+function collatzto(n){
+    for (let i = 1; i <= n; i++) {
+        let steps = 0;
+        let int = i;
+        while (int != 1){
+            int = (int%2 == 0)? int/2 : 3*int +1;
+            steps++;
+        }
+        outputEl.innerHTML += `${i}: ${steps} steps.<br>`;
+        
+    }
+    
+    
+
+}
+function collatzvar(n, constant){
+    for (let i = 1; i <= n; i++) {
+        let steps = 0;
+        let int = i;
+        while ((int != (constant||1)) && (steps < 25000)){
+            int = (int%2 == 0)? int/2 : 3*int +constant;
+            steps++;
+        }
+        outputEl.innerHTML += `${i}: ${steps} steps.<br>`;  
+    }
+}
+
+function fibonacci(num){
+    let sequence = [1,1];
+    for (let i = 2; i < num; i++) {
+        let nthNumber = sequence[i-1] + sequence[i-2];
+        sequence.push(nthNumber);
+    }
+    outputEl.innerHTML = `${sequence}<br>${num}th fibonacci number: ${sequence[num-1]}`;
+    
+
+}
