@@ -88,3 +88,13 @@ svg3.addEventListener("mouseout",() =>{
     d3.select("#pipeTopp").interrupt()
     .attr("x",80);
 });
+
+//bilde 4
+const svg4 = document.querySelector("#silisiumBeta");
+
+d3.select(svg4).append("rect").attr("id","silisiumBetaBackground")
+.attr("width",80).attr("height",60).attr("fill","red")
+.attr("x",10).attr("y",20).attr("rx",15);
+
+d3.select("#silisiumBetaBackground").append("path").attr("stroke-width",4).attr("stroke","white")
+.attr("d", "M 30 40 L50 40");
