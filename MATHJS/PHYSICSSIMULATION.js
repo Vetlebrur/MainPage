@@ -64,29 +64,39 @@
 
 
 
-// class Collision {
-//     constructor(o1, o2, dx, dy, d) {
-//         this.o1 = o1;
-//         this.o2 = o2;
 
-//         this.dx = dx;
-//         this.dy = dy;
-//         this.d = d;
-//     }
-// }
+//var redCircle, yellowCircle, blueCircle;
 
-var redGamePiece, yellowGamePiece;
+var maxSpeed = 30;
+var energyRetainment = 1;
+const objects = [];
 
-function startGame() {
-    redGamePiece = new circle(100, 100, 50, 100, "red");
-    yellowGamePiece = new circle(500, 100, 50, 1000,"yellow");    
+document.body.onkeydown = function(e){
+    if(e.keyCode == 13){
+        document.body.removeChild(document.body.children[0]);
+        startSimulation();
+        
+    }
+}
+
+function startSimulation() {
+    // redCircle = new circle(100,100,50, 100, "red");
+    // yellowCircle = new circle(500, 100, 50, 100,"yellow");
+    // blueCircle = new circle(300, 100, 80, 500, "blue")
+    
+    // objects.push(redCircle);
+    // objects.push(yellowCircle);
+    // objects.push(blueCircle);
+
+    createObjects();
     myGameArea.start();
+    
 }
 
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.canvas.width = 800;
+        this.canvas.width = 1000;
         this.canvas.height = 700;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
@@ -107,7 +117,7 @@ class circle{
     
         this.ax = 0;
         this.ay = 0;
-        this.vx = 3;
+        this.vx = 0;
         this.vy = 0; 
         this.fx = 0;
         this.fy = 9.81*this.m;
@@ -127,6 +137,18 @@ class circle{
             this.vy += this.ay;
             this.x += this.vx;
             this.y += this.vy;
+            if (this.vx > maxSpeed) {
+                this.vx = maxSpeed
+            }
+            if (this.vx < -maxSpeed) {
+                this.vx = -maxSpeed
+            }
+            if (this.vy > maxSpeed) {
+                this.vy = maxSpeed
+            }
+            if (this.vy < -maxSpeed) {
+                this.vy = -maxSpeed
+            }
     }
 
     resolveEdgeCollision(){
@@ -134,36 +156,33 @@ class circle{
         if (this.x + this.r > myGameArea.canvas.width) {
             // Need to know how much we overshot the canvas width so we know how far to 'bounce'.
             this.x = myGameArea.canvas.width - this.r;
-            this.vx = -this.vx;
-            this.ax = -this.ax;
+            this.vx = -this.vx*energyRetainment;
+            this.ax = -this.ax*energyRetainment;
         }
 
         // Detect collision with bottom wall.
         else if (this.y + this.r > myGameArea.canvas.height) {
             this.y = myGameArea.canvas.height - this.r;
-            this.vy = -this.vy;
+            this.vy = -this.vy*energyRetainment;
             //this.ay = -this.ay;
         }
 
         // Detect collision with left wall.
         else if (this.x - this.r < 0) {
             this.x  = this.r;
-            this.vx = -this.vx;
-            this.ax = -this.ax;
+            this.vx = -this.vx*energyRetainment;
+            this.ax = -this.ax*energyRetainment;
         }
         // Detect collision with top wall.
         else if (this.y - this.r < 0) {
             this.y = this.r;
-            this.vy = -this.vy;
-            this.ay = -this.ay;
+            this.vy = -this.vy*energyRetainment;
+            this.ay = -this.ay*energyRetainment;
         }
-
     }
 }
 
-function checkcollision(o1,o2){
-    
-
+function checkCollision(o1,o2){
     let dx = Math.abs(o2.x) - Math.abs(o1.x);
     let dy = Math.abs(o2.y) - Math.abs(o1.y);
     let d = Math.sqrt(Math.pow(dx,2) + Math.pow(dy,2));
@@ -182,59 +201,37 @@ function checkcollision(o1,o2){
         o1.vy -= k * ny / o1.m;
         o2.vx += k * nx / o2.m;
         o2.vy += k * ny / o2.m;
-        
-
-        
     }
 }
 
 function updateSimulation() {
     myGameArea.clear();
 
-    redGamePiece.resolveEdgeCollision();
-    yellowGamePiece.resolveEdgeCollision();
-
-    redGamePiece.newPos();
-    yellowGamePiece.newPos();
-
-
-    checkcollision(redGamePiece,yellowGamePiece);
-    redGamePiece.draw();
-    yellowGamePiece.draw();
-}
-
-// document.body.onkeydown = function(e){
-//     if(e.keyCode == 13){
-//         move(frameTime)
-//         box.fillRect(x,y,80,150);
-//     }
-// }
-// for(let i = 0; i<60; i++){
-//     move(frameTime);
-//     box.fillRect(x,y,80,150);
-function animate() {
-    ctx.clearRect(0, 0, myGameArea.canvas.width, myGameArea.canvas.height);
-
-    for (let o of objects) {
-        o.resolveEdgeCollision();
-    }
-    let collisions = [];
     for (let [i, o1] of objects.entries()) {
         for (let [j, o2] of objects.entries()) {
             if (i < j) {
-                let {collisionInfo, collided} = checkCollision(o1, o2);
-                if (collided) {
-                    collisions.push(collisionInfo);
-                }
+                checkCollision(o1, o2);
             }
         }
     }
-
-    for (let col of collisions) {
-        currentCollisionType(col)  // resolveCollision(col)
-    }
     for (let o of objects) {
+        o.resolveEdgeCollision();
+        o.newPos();
         o.draw();
     }
-    window.requestAnimationFrame(animate);
+}
+
+function createObjects(){
+    objectCreation = {
+        amount: 500,
+        radius: 10,
+        mass: 100,
+        color: "black",
+    };
+    for (let i = 0; i < objectCreation.amount; i++) {
+        let x = Math.random()*myGameArea.canvas.width*3;
+        let y = Math.random()*myGameArea.canvas.height*3;
+        let obj = new circle(x, y, objectCreation.radius, objectCreation.mass, objectCreation.color);
+        objects.push(obj);
+    }
 }
