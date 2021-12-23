@@ -67,40 +67,87 @@
 
 //var redCircle, yellowCircle, blueCircle;
 
+var framesPerSecond = 50;
+
+var gravity = false;
+var g = 9.81;
+
+var buoyancy = false;
+var airPressure = 1.225;
+
+var airResistance = false;
+var dragCoefficient = 0.47;
+
+
 var maxSpeed = 30;
 var energyRetainment = 1;
-const objects = [];
+
+var frameTimer = 0;
+var time = [0];
+var objects = [];
+var dataOfChart = [];
 
 document.body.onkeydown = function(e){
     if(e.keyCode == 13){
         document.body.removeChild(document.body.children[0]);
-        startSimulation();
+        startParticleSimulation();
         
     }
 }
 
-function startSimulation() {
+function startSimulation(num){
+    document.body.removeChild(document.body.children[0]);
+    objects = [];
+    if (num == 1){
+        startBalloonSimulation();
+    }
+    else if (num == 2){
+        startParticleSimulation();
+    }
+    else if (num == 3){
+    
+    }
+    else if (num == 4){
+
+    }
+    simulationArea.start();
+}
+
+function startBalloonSimulation(){
+    gravity = true;
+    buoyancy = true;
+    airResistance = true;
+
+
+    blueCircle = new circle(450, 100, 12, 1.64, "blue");
+    objects.push(blueCircle);
     // redCircle = new circle(100,100,50, 100, "red");
     // yellowCircle = new circle(500, 100, 50, 100,"yellow");
-    // blueCircle = new circle(300, 100, 80, 500, "blue")
+    
     
     // objects.push(redCircle);
     // objects.push(yellowCircle);
-    // objects.push(blueCircle);
 
-    createObjects();
-    myGameArea.start();
     
 }
 
-var myGameArea = {
+function startParticleSimulation() {
+    gravity = true;
+
+    createObjects();  
+    
+}
+
+
+
+var simulationArea = {
     canvas : document.createElement("canvas"),
     start : function() {
         this.canvas.width = 1000;
         this.canvas.height = 700;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-        this.interval = setInterval(updateSimulation, 20);
+        this.interval = setInterval(updateSimulation, 1000/framesPerSecond);
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -114,16 +161,19 @@ class circle{
         this.color = color;
         this.r = radius;
         this.m = mass;
+        this.V = (4/3)*Math.PI*Math.pow(this.r/20,3);
+        this.A = Math.PI*Math.pow(this.r/20,2)
+        this.Cd = dragCoefficient;
     
         this.ax = 0;
         this.ay = 0;
         this.vx = 0;
         this.vy = 0; 
         this.fx = 0;
-        this.fy = 9.81*this.m;
+        this.fy = 0;
     }
     draw(){
-        var ctx = myGameArea.context;
+        var ctx = simulationArea.context;
         ctx.fillStyle = this.color;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.r, 0, Math.PI*2, true);
@@ -131,8 +181,10 @@ class circle{
         ctx.fill();
     }
     newPos(){
-            this.ax = this.fx/(50*this.m);
-            this.ay = this.fy/(50*this.m);
+            this.fx = 0;
+            this.fy = ((gravity)? g*this.m : 0)- ((buoyancy)? g*this.V*airPressure : 0) - ((airResistance)? (1/2)*airPressure*this.Cd*this.A*Math.pow(this.vy,2) : 0);
+            this.ax = this.fx/(framesPerSecond*this.m);
+            this.ay = this.fy/(framesPerSecond*this.m);
             this.vx += this.ax;
             this.vy += this.ay;
             this.x += this.vx;
@@ -153,16 +205,16 @@ class circle{
 
     resolveEdgeCollision(){
         // Detect collision with right wall.
-        if (this.x + this.r > myGameArea.canvas.width) {
+        if (this.x + this.r > simulationArea.canvas.width) {
             // Need to know how much we overshot the canvas width so we know how far to 'bounce'.
-            this.x = myGameArea.canvas.width - this.r;
+            this.x = simulationArea.canvas.width - this.r;
             this.vx = -this.vx*energyRetainment;
             this.ax = -this.ax*energyRetainment;
         }
 
         // Detect collision with bottom wall.
-        else if (this.y + this.r > myGameArea.canvas.height) {
-            this.y = myGameArea.canvas.height - this.r;
+        else if (this.y + this.r > simulationArea.canvas.height) {
+            this.y = simulationArea.canvas.height - this.r;
             this.vy = -this.vy*energyRetainment;
             //this.ay = -this.ay;
         }
@@ -205,7 +257,7 @@ function checkCollision(o1,o2){
 }
 
 function updateSimulation() {
-    myGameArea.clear();
+    simulationArea.clear();
 
     for (let [i, o1] of objects.entries()) {
         for (let [j, o2] of objects.entries()) {
@@ -219,19 +271,72 @@ function updateSimulation() {
         o.newPos();
         o.draw();
     }
+
+
+
+    frameTimer++;
+    for (let o of objects){
+        let coordinate = {x:time[time.length-1], y:o.vy};
+        dataOfChart.push(coordinate);
+    }
+    time.push(time[time.length-1]+0.02);
+    if (frameTimer==500){
+        myChart.update();
+    }
+
 }
 
 function createObjects(){
     objectCreation = {
         amount: 500,
         radius: 10,
-        mass: 100,
+        mass: 10,
         color: "black",
     };
     for (let i = 0; i < objectCreation.amount; i++) {
-        let x = Math.random()*myGameArea.canvas.width*3;
-        let y = Math.random()*myGameArea.canvas.height*3;
+        let x = Math.random()*simulationArea.canvas.width*3;
+        let y = Math.random()*simulationArea.canvas.height*5;
         let obj = new circle(x, y, objectCreation.radius, objectCreation.mass, objectCreation.color);
         objects.push(obj);
     }
 }
+
+
+
+
+// charting of info
+const ctx = document.getElementById('canvasChart').getContext('2d');
+const myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: time,
+        datasets: [{
+            label: 'Speed',
+            data: dataOfChart,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
