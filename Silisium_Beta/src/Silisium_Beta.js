@@ -14,17 +14,17 @@ btnEl.addEventListener("click", ()=> {
     outputEl.innerHTML = "";
     let input = inputEl.value.toLowerCase();
     if(input == ""){
-        alert("insert values");
+        alert("error: insert values");
     }
     else if ((input.includes("alert")) || (input.includes("console"))){
-        alert("error");
+        alert("error: illegal command");
     }
     else if(input.includes("(") && !input.includes("sq")){
         try{
             eval(input);
         }
         catch{
-            alert("error");
+            alert("error: not a function");
             
         }
     }
@@ -39,14 +39,13 @@ btnEl.addEventListener("click", ()=> {
 });
 
 function calculate(equation){
-
     let items = {
         "twen":2,"thir":3,"fif":5,"eigh":8,"teen":"+10","zero":0,
         "one": 1,"two": 2,"three":3,"four":4,"five":5,"six":6,"seven":7,
         "eight":8,"nine":9,"ten":10,"eleven":11,"twelve":12,"ty":"*10+",
         "hundred":"*100","thousand":"*1000",
 
-        " ":"","=":"","of":"","by":"","the":"","and":"+","plus":"+",
+        " ":"","=":"","to":"","of":"","by":"","the":"","and":"+","plus":"+",
         "minus":"-","divided":"/","times":"*","power":"**","^":"**",
         "sqrt(":"Math.sqrt(","squareroot(":"Math.sqrt(",
     }
@@ -58,14 +57,12 @@ function calculate(equation){
             newEquation = newEquation.replaceAll(word, items[word]);
         }
     }
-    //alert(equation)
-    //alert(newEquation)
     try {
         let solution = eval(newEquation); 
         outputEl.innerHTML = `${equation} = ${solution}`;
     }
     catch{
-        alert("error");
+        alert("error: not computable");
     }
 }
 
@@ -224,7 +221,7 @@ function doomsdayAlgorithm(){
     }
     outputEl.innerHTML= `the date falls on a ${dayOfWeek}!`;
 }
-
+//Creates a christmas tree
 function christmastree(n){
     for (let i = 0; i < n; i++) {
         for (let j = 0; j <= i; j++) {
@@ -249,7 +246,7 @@ function christmastree(n){
     }
 
 }
-
+// checks for primes up to n
 function primes(n){
     let primeFactors = [];
     let factorizedNumber = [];
@@ -271,25 +268,28 @@ function primes(n){
     }
     outputEl.innerHTML = (factorizedNumber.length == 1)? `${n} is prime`:`Factors of ${n}: ${factorizedNumber}`;
 }
-
+//classic fizzbuzz, but 140 characters and 1 line
 function fizzbuzz(n){
     for (let i = 1; i <= n; i++){
-        let value = (i%3 != 0)? ((i%5 != 0)? i : "buzz"): (i%15 != 0)? "fizz":"fizzbuzz";  
-        outputEl.innerHTML += value+"<br>";}
-}
+        outputEl.innerHTML += ((i%3 != 0)? ((i%5 != 0)? i : "buzz"): (i%15 != 0)? "fizz":"fizzbuzz") + "<br>";}
+};
 
+//checks if given n will go to 1 through the criterions given by the collatz conjecture
 function collatz(n){
-    let steps = 0;
+    
+    let steps = 1;
+    let num = n;
     while (n != 1){
         outputEl.innerHTML += `${n}-`;
-        n = (n%2 == 0)? n/2 : 3*n +1;
+        n = (n%2 == 0)? n/2 : 3*n + 1;
         steps++;
-        
-
     }
     outputEl.innerHTML += `1 <br>${num} reaches 1 after ${steps} steps.`;
 }
+
+//checks all values up to n with the same rules
 function collatzto(n){
+    outputEl.innerHTML += `n: k steps <br>`;
     for (let i = 1; i <= n; i++) {
         let steps = 0;
         let int = i;
@@ -298,12 +298,9 @@ function collatzto(n){
             steps++;
         }
         outputEl.innerHTML += `${i}: ${steps} steps.<br>`;
-        
     }
-    
-    
-
 }
+//checks all values up to n, but the +1 is a variable 'constant'
 function collatzvar(n, constant){
     for (let i = 1; i <= n; i++) {
         let steps = 0;
@@ -315,14 +312,29 @@ function collatzvar(n, constant){
         outputEl.innerHTML += `${i}: ${steps} steps.<br>`;  
     }
 }
-
-function fibonacci(num){
+//finds the fibonacci numbers up to n
+function fibonacci(n){
     let sequence = [1,1];
-    for (let i = 2; i < num; i++) {
+    for (let i = 2; i < n; i++) {
         let nthNumber = sequence[i-1] + sequence[i-2];
         sequence.push(nthNumber);
     }
-    outputEl.innerHTML = `${sequence}<br>${num}th fibonacci number: ${sequence[num-1]}`;
+    outputEl.innerHTML = `${sequence}<br>${n}th fibonacci number: ${sequence[n-1]}`;
     
 
+}
+//creates a pascal triangle
+function pascaltriangle(n){
+    let columns =[];
+    for (let i = 0; i < n; i++) {
+        let row = [];
+        row.push(1);
+        for (let j = 1; j < i; j++) {
+            let number = columns[i-1][j-1]+columns[i-1][j];
+            row.push(number);   
+        }
+        (i != 0)? row.push(1): 0;
+        columns.push(row);
+        outputEl.innerHTML += `${row}<br>`;
+    }
 }
