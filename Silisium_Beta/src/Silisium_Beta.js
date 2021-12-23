@@ -74,7 +74,7 @@ function calculate(equation){
 
 //The doomsday method for calculating all weekdays for any dates 
 function doomsdayAlgorithm(){
-    let date = inputEl.value.toLowerCase().replaceAll(" ","").replaceAll("st","").replaceAll("date","")
+    let date = inputEl.value.toLowerCase().replaceAll(" ","").replaceAll("date","")
     .replaceAll("nd","").replaceAll("rd","").replaceAll("th","").replaceAll("of","");
     var day, specialDay, weekDay, dayOfWeek, year, month, leapYear, century;
 
@@ -188,9 +188,9 @@ function doomsdayAlgorithm(){
             specialDay = 12;
             break;   
     }
-    
     weekDay += day;
     weekDay -= specialDay;
+    
     if(weekDay < 0){
         while (weekDay < 0){
             weekDay+=7;
