@@ -40,7 +40,7 @@ btnEl.addEventListener("click", ()=> {
 
 function calculate(equation){
     let items = {
-        "twen":2,"thir":3,"fif":5,"eigh":8,"teen":"+10","zero":0,
+        "twen":2,"thir":3,"for":4,"fif":5,"eigh":8,"teen":"+10","zero":0,
         "one": 1,"two": 2,"three":3,"four":4,"five":5,"six":6,"seven":7,
         "eight":8,"nine":9,"ten":10,"eleven":11,"twelve":12,"ty":"*10+",
         "hundred":"*100","thousand":"*1000",
@@ -62,7 +62,13 @@ function calculate(equation){
         outputEl.innerHTML = `${equation} = ${solution}`;
     }
     catch{
-        alert("error: not computable");
+        newEquation += 0;
+        try {
+            let solution = eval(newEquation);
+            outputEl.innerHTML = `${equation} = ${solution}`;
+        } catch {
+            alert("error: not computable");
+        }
     }
 }
 
@@ -248,35 +254,35 @@ function christmastree(n){
 }
 // checks for primes up to n
 function primes(n){
-    let primeFactors = [];
-    let factorizedNumber = [];
-    let factoredN = n;
-    for (let i = 2; i < Math.sqrt(n); i++) {
-        if(factoredN%i == 0){
-            if(!primeFactors.includes(i)){
-                primeFactors.push(i);
-            }
-            while (factoredN%i == 0){
-                factorizedNumber.push(i);
-                factoredN = factoredN/i;
-            }
+    for (let i = 3; i <= n; i++) {
+        let primeFactors = [];
+        let factorizedNumber = [];
+        let factoredN = i;
+        for (let j = 2; j < Math.sqrt(n); j++) {
+            if(factoredN%j == 0){
+                (!primeFactors.includes(j))? primeFactors.push(j): 0;
+                while (factoredN%j == 0){
+                    factorizedNumber.push(j);
+                    factoredN = factoredN/j;
+                }
+            } 
         } 
-    } 
-    if (factoredN != 1){
-        factorizedNumber.push(factoredN);
-        primeFactors.push(factoredN);
+        if (factoredN != 1){
+            factorizedNumber.push(factoredN);
+            primeFactors.push(factoredN);
+        }
+        outputEl.innerHTML += ((factorizedNumber.length == 1)? `${i} is prime`:`${i} = ${factorizedNumber}`) + "<br>";
     }
-    outputEl.innerHTML = (factorizedNumber.length == 1)? `${n} is prime`:`Factors of ${n}: ${factorizedNumber}`;
+    outputEl.innerHTML.replaceAll(",","*");
 }
-//classic fizzbuzz, but 140 characters and 1 line
+//classic fizzbuzz, but 140 characters and 1/2 line(s)
 function fizzbuzz(n){
     for (let i = 1; i <= n; i++){
-        outputEl.innerHTML += ((i%3 != 0)? ((i%5 != 0)? i : "buzz"): (i%15 != 0)? "fizz":"fizzbuzz") + "<br>";}
+        outputEl.innerHTML += ((i%3!=0)? ((i%5!=0)? i:"buzz"):(i%15!=0)? "fizz":"fizzbuzz")+"<br>";}
 };
 
 //checks if given n will go to 1 through the criterions given by the collatz conjecture
 function collatz(n){
-    
     let steps = 1;
     let num = n;
     while (n != 1){
@@ -302,15 +308,21 @@ function collatzto(n){
 }
 //checks all values up to n, but the +1 is a variable 'constant'
 function collatzvar(n, constant){
-    for (let i = 1; i <= n; i++) {
-        let steps = 0;
-        let int = i;
-        while ((int != (constant||1)) && (steps < 25000)){
-            int = (int%2 == 0)? int/2 : 3*int +constant;
-            steps++;
+    if (constant%2 != 0){
+        for (let i = 1; i <= n; i++) {
+            let steps = 0;
+            let int = i;
+            while ((int != (constant||1)) && (steps < 25000)){
+                int = (int%2 == 0)? int/2 : 3*int +constant;
+                steps++;
+            }
+            outputEl.innerHTML += `${i}: ${steps} steps.<br>`;
+            
         }
-        outputEl.innerHTML += `${i}: ${steps} steps.<br>`;  
+        return;
     }
+    alert("error: if the constant is even, the value will never converge to a value.")
+    
 }
 //finds the fibonacci numbers up to n
 function fibonacci(n){
