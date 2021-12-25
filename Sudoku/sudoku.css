@@ -1,0 +1,45 @@
+*{
+    box-sizing: border-box;
+    
+}
+
+#board{
+    display:grid;
+    grid-template-columns:1fr 1fr 2fr 1fr 1fr 2fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 2fr 1fr 1fr 2fr 1fr 1fr 1fr;
+    width:fit-content;
+    height:100%;
+    gap: 1em;
+    padding:2em ;
+}
+
+#boardCode{
+    margin:50px 0 20px;
+    width:50%;
+}
+#boardCodeSubmitButton{
+    border:2px solid black;
+    border-radius: 5px;
+    width:fit-content;
+    padding:1em;
+    transition-duration:0.4s;
+}
+#boardCodeSubmitButton:hover{
+    background: lightgray;
+}
+#square{
+    display:block;
+    width:50px;
+    height:50px;
+    border:2px solid black;
+    font-size: 20px;
+    text-align: center;
+    border-radius: 5px;
+}
+div{
+    font-weight:bold;
+}
+input{
+    color: blue;
+
+}
