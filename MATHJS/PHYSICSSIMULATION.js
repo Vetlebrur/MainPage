@@ -67,7 +67,10 @@
 
 //var redCircle, yellowCircle, blueCircle;
 
+
+//settings for the simulations
 var framesPerSecond = 50;
+
 
 var gravity = false;
 var g = 9.81;
@@ -82,6 +85,17 @@ var dragCoefficient = 0.47;
 var maxSpeed = 30;
 var energyRetainment = 1;
 
+//game related settings
+var boxCollision = false;
+var controls = false;
+var speed = 200;
+var jumpHeight = 10;
+var onGround = false;
+var onPlatform = false;
+var keyLock=false;
+
+//data log settings
+var logData = false;
 var frameTimer = 0;
 var time = [0];
 var objects = [];
@@ -89,26 +103,26 @@ var dataOfChart = [];
 
 document.body.onkeydown = function(e){
     if(e.keyCode == 13){
-        document.body.removeChild(document.body.children[0]);
-        startParticleSimulation();
-        
+        startSimulation(3);
     }
 }
-
+//chooses a simulation and draws it
 function startSimulation(num){
     document.body.removeChild(document.body.children[0]);
     objects = [];
-    if (num == 1){
-        startBalloonSimulation();
-    }
-    else if (num == 2){
-        startParticleSimulation();
-    }
-    else if (num == 3){
-    
-    }
-    else if (num == 4){
-
+    switch (num){
+        case 1:
+            startBalloonSimulation();
+            break;
+        case 2:
+            startParticleSimulation();
+            break;
+        case 3:
+            startGame();
+            break;
+        case 4:
+            //last simulation
+            break;
     }
     simulationArea.start();
 }
@@ -133,11 +147,70 @@ function startBalloonSimulation(){
 
 function startParticleSimulation() {
     gravity = true;
-
-    createObjects();  
+    logData = true;
+    energyRetainment = 0.9;
     
+    createObjects();  
 }
 
+//start of code for the Game
+function startGame(){
+    gravity = true;
+    controls = true;
+    maxSpeed = 10;
+    boxCollision = true;
+
+    redBox = new box(50, 0, 100, 100, 10, "red", true);
+    objects.push(redBox);
+
+    blueObstacle1 = new box(500, 500, 300, 40, 100, "blue", false);
+    blueObstacle2 = new box(200,300, 300, 20, 100, "blue", false);
+    objects.push(blueObstacle1);
+    objects.push(blueObstacle2);
+}
+
+document.body.onkeydown = function(e){
+    if (controls){
+        //left arrow => movement to the left
+        if (e.keyCode == 37) {
+            if (!keyLock){
+                objects[0].fx = -speed;
+                keyLock = true;
+            }
+        }
+        //right arrow => movement to the right
+        if (e.keyCode == 39) {
+            if (!keyLock){
+                objects[0].fx = speed;
+                keyLock = true;
+            }
+        }
+        //space => jump
+        if (e.keyCode == 32 || e.keyCode == 38){
+            if (onGround || onPlatform){
+                objects[0].vy = -jumpHeight;
+                objects[0].newPos()
+            }   
+        }
+    }
+}
+//makes the controls stop when the key is released
+document.body.onkeyup = function(e){
+    if (controls){
+        if (e.keyCode == 37){
+            objects[0].fx = 0;
+            objects[0].ax = 0;
+            objects[0].vx = 0;
+            keyLock = false;
+        }
+        if (e.keyCode == 39){
+            objects[0].fx = 0;
+            objects[0].ax = 0;
+            objects[0].vx = 0;
+            keyLock = false;
+        }
+    }
+}
 
 
 var simulationArea = {
@@ -164,6 +237,7 @@ class circle{
         this.V = (4/3)*Math.PI*Math.pow(this.r/20,3);
         this.A = Math.PI*Math.pow(this.r/20,2)
         this.Cd = dragCoefficient;
+        this.moveable = true;
     
         this.ax = 0;
         this.ay = 0;
@@ -234,6 +308,96 @@ class circle{
     }
 }
 
+class box{
+    constructor(x, y, width, height, mass, color, moveable){
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.width = width;
+        this.height = height;
+        this.m = mass;
+        this.A = width*height;
+        this.moveable = moveable;
+    
+        this.ax = 0;
+        this.ay = 0;
+        this.vx = 0;
+        this.vy = 0; 
+        this.fx = 0;
+        this.fy = 0;
+    }
+    draw(){
+        var ctx = simulationArea.context;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.rect(this.x, this.y, this.width, this.height);
+        ctx.stroke();
+        ctx.fill();
+        
+    }
+    newPos(){
+        if (this.moveable){
+            this.fx += 0;
+            this.fy = ((gravity)? g*this.m : 0);
+            this.ax = this.fx/(framesPerSecond*this.m);
+            this.ay = this.fy/(framesPerSecond*this.m);
+            this.vx += this.ax;
+            this.vy += this.ay;
+            this.x += this.vx;
+            this.y += this.vy;
+            if (this.vx > maxSpeed) {
+                this.vx = maxSpeed
+            }
+            if (this.vx < -maxSpeed) {
+                this.vx = -maxSpeed
+            }
+            if (this.vy > maxSpeed) {
+                this.vy = maxSpeed
+            }
+            if (this.vy < -maxSpeed) {
+                this.vy = -maxSpeed
+            }
+
+        }
+        
+    }
+    resolveEdgeCollision(){
+        // Detect collision with right wall.
+        if (this.x + this.width > simulationArea.canvas.width) {
+            // Need to know how much we overshot the canvas width so we know how far to 'bounce'.
+            this.x = simulationArea.canvas.width - this.width;
+            this.vx = 0;
+            this.ax = 0;
+        }
+
+        // Detect collision with bottom wall.
+        if (this.y + this.height > simulationArea.canvas.height) {
+            onGround = true;
+            onPlatform = false;
+            this.y = simulationArea.canvas.height - this.height;
+            this.vy = 0;
+            //this.ay = -this.ay;
+        }
+        else{
+            onGround = false;
+        }
+
+        // Detect collision with left wall.
+        if (this.x < 0) {
+            this.x  = 0;
+            this.vx = 0;
+            this.ax = 0;
+        }
+        // Detect collision with top wall.
+        if (this.y < 0) {
+            this.y = 0;
+            this.vy = 0;
+            this.ay = 0;
+        }
+    }
+
+}
+
 function checkCollision(o1,o2){
     let dx = Math.abs(o2.x) - Math.abs(o1.x);
     let dy = Math.abs(o2.y) - Math.abs(o1.y);
@@ -256,34 +420,105 @@ function checkCollision(o1,o2){
     }
 }
 
+//Collision between boxes
+function checkBoxCollision(object1, object2){
+    if (object1.moveable){
+        o1 = object1;
+        o2 = object2;
+    }
+    else if (object2.moveable){
+        o1 = object2;
+        o2 = object1;
+    }
+    else{
+        return;
+    }
+    let intersectionX = 0;
+    let intersectionY = 0;
+    //checks if object 1 exists somewhere inside object 2 in the y plane, and in the x plane
+    if ((o1.y+o1.height > o2.y && o1.y < o2.y+o2.height) && (o1.x+o1.width > o2.x && o1.x<o2.x+o2.width)){
+
+        // if both are true, the objects have collided/intersected
+        //now we check which plane has the most intersection:
+        
+        intersectionX = (o1.x < o2.x)? o1.x+o1.width - o2.x : o2.x+o2.width - o1.x;
+        intersectionY = (o1.y < o2.y)? o1.y+o1.height - o2.y : o2.y+o2.height - o1.y;
+
+        //we then check which plane has the most overlap, and resolving a collision in the plane with the most intersection
+        if (intersectionY > intersectionX){
+            //collision with o2 to the left of o1
+            if (o1.x > o2.x){
+                o1.x = o2.x + o2.width;
+            }
+            //collision with o2 to the right of o1
+            else{
+                o1.x =  o2.x - o1.width;
+            }
+            o1.fx = 0;
+            o1.ax = 0;
+            o1.vx = 0;
+        }
+        else{
+            //collision with o2 being below o1:
+            if (o1.y < o2.y){
+                o1.y = o2.y - o1.height;
+                onPlatform = true;
+            }
+            //collision with o2 being above o1.
+            else{
+                o1.y = o2.y + o2.height;
+            }
+            o1.fy = 0;
+            o1.ay = 0;
+            o1.vy = 0;
+        }
+    }
+    else{
+        onPlatform = false;
+    }
+}
+
 function updateSimulation() {
     simulationArea.clear();
-
-    for (let [i, o1] of objects.entries()) {
-        for (let [j, o2] of objects.entries()) {
-            if (i < j) {
-                checkCollision(o1, o2);
+    onPlatform = false;
+    if (objects.length > 1){
+        for (let [i, o1] of objects.entries()) {
+            for (let [j, o2] of objects.entries()) {
+                if (i < j) {
+                    if (!boxCollision){
+                        checkCollision(o1, o2);
+                    }
+                    else{
+                        checkBoxCollision(o1, o2);
+                        if (onPlatform){break;}
+                    }
+                    if (onPlatform){break;}
+                }
+                if (onPlatform){break;}
             }
+            if (onPlatform){break;}
         }
     }
     for (let o of objects) {
-        o.resolveEdgeCollision();
-        o.newPos();
+        if(o.moveable){
+            o.resolveEdgeCollision();
+            o.newPos();    
+        }
         o.draw();
     }
 
 
-
-    frameTimer++;
-    for (let o of objects){
-        let coordinate = {x:time[time.length-1], y:o.vy};
-        dataOfChart.push(coordinate);
+    if (logData){
+        frameTimer++;
+        for (let o of objects){
+            let coordinate = {x:time[time.length-1], y:o.vy};
+            dataOfChart.push(coordinate);
+        }
+        time.push(time[time.length-1]+0.02);
+        if (frameTimer==500){
+            myChart.update();
+        }
     }
-    time.push(time[time.length-1]+0.02);
-    if (frameTimer==500){
-        myChart.update();
-    }
-
 }
 
 function createObjects(){
@@ -305,38 +540,40 @@ function createObjects(){
 
 
 // charting of info
-const ctx = document.getElementById('canvasChart').getContext('2d');
-const myChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: time,
-        datasets: [{
-            label: 'Speed',
-            data: dataOfChart,
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
+function chartData(){
+    const ctx = document.getElementById('canvasChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: time,
+            datasets: [{
+                label: 'Speed',
+                data: dataOfChart,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
             }
         }
-    }
-});
+    });
+}

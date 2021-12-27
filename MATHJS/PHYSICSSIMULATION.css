@@ -1,11 +1,21 @@
+body{
+    margin:3px;
+}
 canvas{
     border:3px solid black;
 }
-
+#canvasChart{
+    height:0;
+}
 div{
+    display:inline-block;
     border: 2px solid black;
     background: lightgray;
-    margin:auto;
+    margin:auto 0;
     width:fit-content;
-    padding:2em;
+    padding:1em; 
+    border-radius: 5px;
+}
+div:hover{
+    background:gray;
 }
