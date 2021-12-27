@@ -20,7 +20,7 @@ var controls = false;
 var speed = 200;
 var jumpHeight = 10;
 var onGround = false;
-var onPlatform = 0;
+var onPlatform = false;
 var keyLock = false;
 
 //data log settings
@@ -302,7 +302,7 @@ class box{
         // Detect collision with bottom wall.
         if (this.y + this.height > simulationArea.canvas.height) {
             onGround = true;
-            onPlatform = 0;
+            onPlatform = false;
             this.y = simulationArea.canvas.height - this.height;
             this.vy = 0;
             //this.ay = -this.ay;
@@ -399,7 +399,7 @@ function checkBoxCollision(object1, object2){
             //collision with o2 being below o1:
             if (o1.y < o2.y){
                 o1.y = o2.y - o1.height;
-                onPlatform += 1;
+                onPlatform =true;
             }
             //collision with o2 being above o1.
             else{
@@ -410,14 +410,11 @@ function checkBoxCollision(object1, object2){
             o1.vy = 0;
         }
     }
-    else{
-        onPlatform += 0;
-    }
 }
 //every frame the collisions are checked, the objects are moved, and the objects are redrawn.
 function updateSimulation() {
     simulationArea.clear(); //clear canvas, removing everything
-    onPlatform = 0;
+    onPlatform = false;
     //go through every object in the objects array, and checking if they collide with one another, 
     if (objects.length > 1){
         for (let [i, o1] of objects.entries()) {
