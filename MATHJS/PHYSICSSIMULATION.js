@@ -108,7 +108,6 @@ document.body.onkeydown = function(e){
 }
 //chooses a simulation and draws it
 function startSimulation(num){
-    document.body.removeChild(document.body.children[0]);
     objects = [];
     switch (num){
         case 1:
@@ -219,7 +218,7 @@ var simulationArea = {
         this.canvas.width = 1000;
         this.canvas.height = 700;
         this.context = this.canvas.getContext("2d");
-        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        document.getElementById("simulationArea").insertBefore(this.canvas, document.getElementById("simulationArea").childNodes[0]);
         this.interval = setInterval(updateSimulation, 1000/framesPerSecond);
     },
     clear : function() {
