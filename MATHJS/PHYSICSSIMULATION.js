@@ -30,12 +30,14 @@ var time = [0];
 var objects = [];
 var dataOfChart = [];
 
+//enter key => starts the game simulation
 document.body.onkeydown = function(e){
     if(e.keyCode == 13){
         startSimulation(3);
     }
 }
-//chooses a simulation and draws it
+
+//chooses a simulation and runs it
 function startSimulation(num){
     objects = [];
     switch (num){
@@ -54,6 +56,7 @@ function startSimulation(num){
     }
     simulationArea.start();
 }
+
 //simulation for a balloon drop, includes buoyancy, air resistance, and gravity
 function startBalloonSimulation(){
     gravity = true;
@@ -72,13 +75,26 @@ function startBalloonSimulation(){
 
     
 }
+
 //simulation for hundreds of particles under gravity, and elastic collisions. Also includes an energy retainment from collision with walls
 function startParticleSimulation() {
     gravity = true;
     logData = true;
     energyRetainment = 0.9;
     
-    createObjects();  
+    //creation of the 500 particles in the particle simulation
+    objectCreation = {
+        amount: 500,
+        radius: 10,
+        mass: 10,
+        color: "black",
+    };
+    for (let i = 0; i < objectCreation.amount; i++) {
+        let x = Math.random()*simulationArea.canvas.width*3;
+        let y = Math.random()*simulationArea.canvas.height*5;
+        let obj = new circle(x, y, objectCreation.radius, objectCreation.mass, objectCreation.color);
+        objects.push(obj);
+    }
 }
 
 //start of code for a Game. Game includes collision, gravity, and dynamic and static objects
@@ -87,10 +103,10 @@ function startGame(){
     controls = true;
     maxSpeed = 10;
     boxCollision = true;
-
+    //creates a dynamic box, which we can control. objects[0] is the main box, and the one the controls affect. Therefore it is added first
     redBox = new box(50, 0, 100, 100, 10, "red", true);
     objects.push(redBox);
-
+    //Creating the obstacles, static objects 
     blueObstacle1 = new box(500, 500, 300, 40, 100, "blue", false);
     blueObstacle2 = new box(200,300, 300, 20, 100, "blue", false);
     objects.push(blueObstacle1);
@@ -123,15 +139,18 @@ document.body.onkeydown = function(e){
         }
     }
 }
+
 //makes the controls stop when the key is released(onkeyup)
 document.body.onkeyup = function(e){
     if (controls){
+        //left arrow
         if (e.keyCode == 37){
             objects[0].fx = 0;
             objects[0].ax = 0;
             objects[0].vx = 0;
             keyLock = false;
         }
+        //right arrow
         if (e.keyCode == 39){
             objects[0].fx = 0;
             objects[0].ax = 0;
@@ -156,6 +175,7 @@ var simulationArea = {
     }
 }
 
+//Creates an object with class circle
 class circle{
     constructor(x, y, radius, mass, color){
         this.x = x;
@@ -237,6 +257,7 @@ class circle{
     }
 }
 
+//Creates an object with class box
 class box{
     constructor(x, y, width, height, mass, color, moveable){
         this.x = x;
@@ -327,6 +348,7 @@ class box{
 
 }
 
+//collision between circles
 function checkCollision(o1,o2){
     //finding the difference (deltaX and deltaY) between the centers of the circles 
     let dx = Math.abs(o2.x) - Math.abs(o1.x);
@@ -411,6 +433,7 @@ function checkBoxCollision(object1, object2){
         }
     }
 }
+
 //every frame the collisions are checked, the objects are moved, and the objects are redrawn.
 function updateSimulation() {
     simulationArea.clear(); //clear canvas, removing everything
@@ -452,25 +475,6 @@ function updateSimulation() {
         }
     }
 }
-
-//creation of the 500 particles in the particle simulation
-function createObjects(){
-    objectCreation = {
-        amount: 500,
-        radius: 10,
-        mass: 10,
-        color: "black",
-    };
-    for (let i = 0; i < objectCreation.amount; i++) {
-        let x = Math.random()*simulationArea.canvas.width*3;
-        let y = Math.random()*simulationArea.canvas.height*5;
-        let obj = new circle(x, y, objectCreation.radius, objectCreation.mass, objectCreation.color);
-        objects.push(obj);
-    }
-}
-
-
-
 
 // charting of info, uses a library for data, currently broken
 function chartData(){
