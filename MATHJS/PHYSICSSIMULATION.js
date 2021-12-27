@@ -1,76 +1,5 @@
-
-// var canvas = document.getElementById("canvas");
-
-// var box = canvas.getContext("2d");
-
-// const o = [box];
-
-// var x  = 0;
-// var y  = 0;
-// var vx = 0;
-// var vy = 0;
-// var ax = 1;
-// var ay = 1;
-// var frameTime = 0.0167;
-
-// box.fillStyle = "#FF0000";
-// box.fillRect(x,y,80,150);
-
-// function move(dt) {
-//     console.log(x)
-//     vx += ax * dt;
-//     vy += ay * dt;
-//     x += vx * dt;
-//     y += vy * dt;
-    
-// }
-
-// function moveWithGravity(dt, o) {  // "o" refers to Array of objects we are moving
-//     for (let o1 of o) {  // Zero-out accumulator of forces for each object
-//         o1.fx = 0;
-//         o1.fy = 0;
-//     }
-//     for (let [i, o1] of o.entries()) {  // For each pair of objects...
-//         for (let [j, o2] of o.entries()) {
-//             if (i < j) {  // To not do same pair twice
-//                 let dx = o2.x - o1.x;  // Compute distance between centers of objects
-//                 let dy = o2.y - o1.y;
-//                 let r = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-//                 if (r < 1) {  // To avoid division by 0
-//                     r = 1;
-//                 }
-//                 // Compute force for this pair; k = 1000
-//                 let f = (1000 * o1.m * o2.m) / Math.pow(r, 2);  
-//                 let fx = f * dx / r;  // Break it down into components
-//                 let fy = f * dy / r;
-//                 o1.fx += fx;  // Accumulate for first object
-//                 o1.fy += fy;
-//                 o2.fx -= fx;  // And for second object in opposite direction
-//                 o2.fy -= fy;
-//             }
-//         }
-//     }
-//     for (let o1 of o) {  // for each object update...
-//         let ax = o1.fx / o1.m;  // ...acceleration 
-//         let ay = o1.fy / o1.m;
-
-//         o1.vx += ax * dt;  // ...speed
-//         o1.vy += ay * dt;
-
-//         o1.x += o1.vx * dt;  // ...position
-//         o1.y += o1.vy * dt;
-//     }
-// }
-
-
-
-
-//var redCircle, yellowCircle, blueCircle;
-
-
 //settings for the simulations
 var framesPerSecond = 50;
-
 
 var gravity = false;
 var g = 9.81;
@@ -91,8 +20,8 @@ var controls = false;
 var speed = 200;
 var jumpHeight = 10;
 var onGround = false;
-var onPlatform = false;
-var keyLock=false;
+var onPlatform = 0;
+var keyLock = false;
 
 //data log settings
 var logData = false;
@@ -125,7 +54,7 @@ function startSimulation(num){
     }
     simulationArea.start();
 }
-
+//simulation for a balloon drop, includes buoyancy, air resistance, and gravity
 function startBalloonSimulation(){
     gravity = true;
     buoyancy = true;
@@ -143,7 +72,7 @@ function startBalloonSimulation(){
 
     
 }
-
+//simulation for hundreds of particles under gravity, and elastic collisions. Also includes an energy retainment from collision with walls
 function startParticleSimulation() {
     gravity = true;
     logData = true;
@@ -152,7 +81,7 @@ function startParticleSimulation() {
     createObjects();  
 }
 
-//start of code for the Game
+//start of code for a Game. Game includes collision, gravity, and dynamic and static objects
 function startGame(){
     gravity = true;
     controls = true;
@@ -168,6 +97,7 @@ function startGame(){
     objects.push(blueObstacle2);
 }
 
+//controls for the game, only works if the control boolean is true
 document.body.onkeydown = function(e){
     if (controls){
         //left arrow => movement to the left
@@ -193,7 +123,7 @@ document.body.onkeydown = function(e){
         }
     }
 }
-//makes the controls stop when the key is released
+//makes the controls stop when the key is released(onkeyup)
 document.body.onkeyup = function(e){
     if (controls){
         if (e.keyCode == 37){
@@ -211,7 +141,7 @@ document.body.onkeyup = function(e){
     }
 }
 
-
+//the canvas or simulation area that everything is rendered in.
 var simulationArea = {
     canvas : document.createElement("canvas"),
     start : function() {
@@ -372,7 +302,7 @@ class box{
         // Detect collision with bottom wall.
         if (this.y + this.height > simulationArea.canvas.height) {
             onGround = true;
-            onPlatform = false;
+            onPlatform = 0;
             this.y = simulationArea.canvas.height - this.height;
             this.vy = 0;
             //this.ay = -this.ay;
@@ -398,20 +328,23 @@ class box{
 }
 
 function checkCollision(o1,o2){
+    //finding the difference (deltaX and deltaY) between the centers of the circles 
     let dx = Math.abs(o2.x) - Math.abs(o1.x);
     let dy = Math.abs(o2.y) - Math.abs(o1.y);
+    //then the length of the vector between them (pythagoras)
     let d = Math.sqrt(Math.pow(dx,2) + Math.pow(dy,2));
 
+    //if the vector length is smaller than the two radiis, the circles are intersecting/touching 
     if (d < o1.r+o2.r){
         let nx = dx / d;  // Compute iegen vectors
         let ny = dy / d;
-        let s = o1.r + o2.r - d;
-        o1.x -= nx * s/2;  // Move first object by half of collision size
+        let s = o1.r + o2.r - d; //calculates the amount of overlap that has occured
+        o1.x -= nx * s/2;  // Move first object by half of the overlap size, in the direction opposite of the other ball
         o1.y -= ny * s/2;
-        o2.x += nx * s/2;  // Move other object by half of collision size in opposite direction
+        o2.x += nx * s/2;  // Move second object by half of the overlap size, in the direction opposite of the first ball
         o2.y += ny * s/2;
 
-        let k = -2 * ((o2.vx - o1.vx) * nx + (o2.vy - o1.vy) * ny) / (1/o1.m + 1/o2.m);
+        let k = -2 * ((o2.vx - o1.vx) * nx + (o2.vy - o1.vy) * ny) / (1/o1.m + 1/o2.m); //magic, with vectors and stuff
         o1.vx -= k * nx / o1.m;  // Same as before, just added "k" and switched to "m" instead of "s/2"
         o1.vy -= k * ny / o1.m;
         o2.vx += k * nx / o2.m;
@@ -421,7 +354,14 @@ function checkCollision(o1,o2){
 
 //Collision between boxes
 function checkBoxCollision(object1, object2){
-    if (object1.moveable){
+    //if an object is static, then they will never collide.
+    //It also matters if both objects are dynamic, as the forces need to be calculated.
+    //two dynamic objects have not been added yet
+    if (object1.moveable && object2.moveable){
+        o1 = object1;
+        o2 = object2;
+    }
+    else if (object1.moveable){
         o1 = object1;
         o2 = object2;
     }
@@ -432,18 +372,16 @@ function checkBoxCollision(object1, object2){
     else{
         return;
     }
+    //value for the total intersection of the objects
     let intersectionX = 0;
     let intersectionY = 0;
-    //checks if object 1 exists somewhere inside object 2 in the y plane, and in the x plane
+    //checks if object 1 exists somewhere inside object 2 in the y plane, AND in the x plane
     if ((o1.y+o1.height > o2.y && o1.y < o2.y+o2.height) && (o1.x+o1.width > o2.x && o1.x<o2.x+o2.width)){
+        // if both are true, the objects have collided/intersected, and we can continue
 
-        // if both are true, the objects have collided/intersected
-        //now we check which plane has the most intersection:
-        
+        //now we check which plane has the most intersection, resolving a collision in the plane with the most intersection:
         intersectionX = (o1.x < o2.x)? o1.x+o1.width - o2.x : o2.x+o2.width - o1.x;
         intersectionY = (o1.y < o2.y)? o1.y+o1.height - o2.y : o2.y+o2.height - o1.y;
-
-        //we then check which plane has the most overlap, and resolving a collision in the plane with the most intersection
         if (intersectionY > intersectionX){
             //collision with o2 to the left of o1
             if (o1.x > o2.x){
@@ -461,7 +399,7 @@ function checkBoxCollision(object1, object2){
             //collision with o2 being below o1:
             if (o1.y < o2.y){
                 o1.y = o2.y - o1.height;
-                onPlatform = true;
+                onPlatform += 1;
             }
             //collision with o2 being above o1.
             else{
@@ -473,40 +411,38 @@ function checkBoxCollision(object1, object2){
         }
     }
     else{
-        onPlatform = false;
+        onPlatform += 0;
     }
 }
-
+//every frame the collisions are checked, the objects are moved, and the objects are redrawn.
 function updateSimulation() {
-    simulationArea.clear();
-    onPlatform = false;
+    simulationArea.clear(); //clear canvas, removing everything
+    onPlatform = 0;
+    //go through every object in the objects array, and checking if they collide with one another, 
     if (objects.length > 1){
         for (let [i, o1] of objects.entries()) {
             for (let [j, o2] of objects.entries()) {
-                if (i < j) {
+                if (i < j) { //this removes redundancy in the collision check. Helps with speed, especially if the objects are in the hundreds.
                     if (!boxCollision){
                         checkCollision(o1, o2);
                     }
                     else{
                         checkBoxCollision(o1, o2);
-                        if (onPlatform){break;}
+                        //if the object is on a platform, the code kinda breaks if you run through 
                     }
-                    if (onPlatform){break;}
                 }
-                if (onPlatform){break;}
             }
-            if (onPlatform){break;}
         }
     }
     for (let o of objects) {
         if(o.moveable){
-            o.resolveEdgeCollision();
-            o.newPos();    
+            o.resolveEdgeCollision(); //checks if the object has collided with a wall
+            o.newPos(); //calculate with speed, acceleration, force, etc, to find the new position of the object
         }
-        o.draw();
+        o.draw(); //drawing it all anew
     }
 
-
+    //for logging of data
     if (logData){
         frameTimer++;
         for (let o of objects){
@@ -520,6 +456,7 @@ function updateSimulation() {
     }
 }
 
+//creation of the 500 particles in the particle simulation
 function createObjects(){
     objectCreation = {
         amount: 500,
@@ -538,7 +475,7 @@ function createObjects(){
 
 
 
-// charting of info
+// charting of info, uses a library for data, currently broken
 function chartData(){
     const ctx = document.getElementById('canvasChart').getContext('2d');
     const myChart = new Chart(ctx, {
