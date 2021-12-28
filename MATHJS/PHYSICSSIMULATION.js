@@ -416,6 +416,7 @@ function checkBoxCollision(object1, object2){
             o1.fx = 0;
             o1.ax = 0;
             o1.vx = 0;
+            keyLock = false;
         }
         else{
             //collision with o2 being below o1:
