@@ -1,8 +1,32 @@
-//settings for the simulations
+/*
+THINGS TO DO:
+
+Create elastic collisions with boxes, and make it possible for 2 dynamic boxes to collide and have a realistic collision.
+
+
+
+
+*/
+
+//general settings for the simulations
 var framesPerSecond = 50;
+var boxCollision = false;
+var elasticBoxCollision = false;
 
 var gravity = false;
 var g = 9.81;
+
+var friction = true;
+var mu = 0.50;
+
+var boxMass = 100;
+var maxSpeed = 50;
+var energyRetainment = 0.9;
+
+
+//settings for the balloon simulation
+var balloonMass = 16;
+var balloonRadius = 25;
 
 var buoyancy = false;
 var airPressure = 1.225;
@@ -11,13 +35,20 @@ var airResistance = false;
 var dragCoefficient = 0.47;
 
 
-var maxSpeed = 30;
-var energyRetainment = 1;
+//settings for the particle simulation
+var particleAmount = 500;
+var particleRadius = 10;
+var particleMass = 10;
+
+//settings for the spring simulation
+var springSimulation = false;
+var springVertical = false;
+var springStiffness = 5;
+var springEquilibrium = 400;
 
 //game related settings
-var boxCollision = false;
 var controls = false;
-var speed = 200;
+var speed = 300;
 var jumpHeight = 10;
 var onGround = false;
 var onPlatform = false;
@@ -51,7 +82,7 @@ function startSimulation(num){
             startGame();
             break;
         case 4:
-            //last simulation
+            startSpringSimulation();
             break;
     }
     simulationArea.start();
@@ -64,16 +95,13 @@ function startBalloonSimulation(){
     airResistance = true;
 
 
-    blueCircle = new circle(450, 100, 12, 1.64, "blue");
+    blueCircle = new circle(450, 100, balloonRadius, balloonMass, "blue");
     objects.push(blueCircle);
     // redCircle = new circle(100,100,50, 100, "red");
     // yellowCircle = new circle(500, 100, 50, 100,"yellow");
     
-    
     // objects.push(redCircle);
     // objects.push(yellowCircle);
-
-    
 }
 
 //simulation for hundreds of particles under gravity, and elastic collisions. Also includes an energy retainment from collision with walls
@@ -84,9 +112,9 @@ function startParticleSimulation() {
     
     //creation of the 500 particles in the particle simulation
     objectCreation = {
-        amount: 500,
-        radius: 10,
-        mass: 10,
+        amount: particleAmount,
+        radius: particleRadius,
+        mass: particleMass,
         color: "black",
     };
     for (let i = 0; i < objectCreation.amount; i++) {
@@ -101,16 +129,30 @@ function startParticleSimulation() {
 function startGame(){
     gravity = true;
     controls = true;
-    maxSpeed = 10;
     boxCollision = true;
     //creates a dynamic box, which we can control. objects[0] is the main box, and the one the controls affect. Therefore it is added first
-    redBox = new box(50, 0, 100, 100, 10, "red", true);
+    redBox = new box(50, 0, 100, 100, boxMass, "red", true);
     objects.push(redBox);
     //Creating the obstacles, static objects 
     blueObstacle1 = new box(500, 500, 300, 40, 100, "blue", false);
     blueObstacle2 = new box(200,300, 300, 20, 100, "blue", false);
     objects.push(blueObstacle1);
     objects.push(blueObstacle2);
+}
+
+//Simulation for a box hanging on a spring
+function startSpringSimulation(){
+    gravity = true;
+    boxCollision = true;
+    elasticBoxCollision = true;
+    springSimulation = true;
+    friction = true;
+    blueBox = new box(100, 600, 100, 100, boxMass, "blue", true);
+    objects.push(blueBox);
+    redBox = new box(800, 600, 100, 100, boxMass, "red", true);
+    objects.push(redBox);
+    greySpring = new spring(50, springEquilibrium, objects[0], objects[1], springStiffness, "grey");
+    objects.push(greySpring);
 }
 
 //controls for the game, only works if the control boolean is true
@@ -287,9 +329,12 @@ class box{
     }
     newPos(){
         if (this.moveable){
-            this.fx += 0;
-            this.fy = ((gravity)? g*this.m : 0);
-            this.ax = this.fx/(framesPerSecond*this.m);
+            if (!springSimulation || springVertical){
+                this.fx += 0;
+                this.fy = ((gravity)? g*this.m : 0) - ((springSimulation && springVertical)?  (this.y-springEquilibrium)*springStiffness : 0);
+            }
+            
+            this.ax = this.fx/(framesPerSecond*this.m) ;
             this.ay = this.fy/(framesPerSecond*this.m);
             this.vx += this.ax;
             this.vy += this.ay;
@@ -348,6 +393,68 @@ class box{
 
 }
 
+class spring{
+    constructor(thickness, equilibrium, objecte1, objecte2, stiffness, color){
+        switch (objecte1){
+            case "roof":
+                this.y = 0;
+                this.x = objecte2.x+objecte2.width/2-thickness/2;
+                this.height = objecte2.y;
+                this.width = thickness;
+                springVertical = true;
+                break;
+            case "wall":
+                this.x = 0;
+                this.y = objecte2.y+objecte2.height/2-thickness/2;
+                this.width = objecte2.x;
+                this.height = thickness;
+                break;
+            default:
+                this.x = objecte1.x+objecte1.width;
+                this.y = objecte2.y+objecte2.height/2-thickness/2;
+                this.width = objecte2.x - this.x;
+                this.height = thickness;
+                break;
+        }
+
+        this.firstObject = objecte1;
+        this.secondObject = objecte2;
+        
+        this.color = color;
+        this.moveable = true;
+        
+        this.stiffness = stiffness;
+        this.equilibrium = equilibrium;
+
+    }
+    draw(){
+        var ctx = simulationArea.context;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.rect(this.x, this.y, this.width, this.height);
+        ctx.stroke();
+        ctx.fill();
+        
+    }
+    newPos(){
+        switch (this.firstObject){
+            case "roof":
+                this.height = this.secondObject.y;
+                break;
+            case "wall":
+                this.width = this.secondObject.x;
+                break;
+            default:
+                this.x = this.firstObject.x+this.firstObject.width;
+                this.width = this.secondObject.x - this.x;
+                break;
+        }
+    }
+    resolveEdgeCollision(){
+        return;
+    }
+}
+
 //collision between circles
 function checkCollision(o1,o2){
     //finding the difference (deltaX and deltaY) between the centers of the circles 
@@ -376,10 +483,14 @@ function checkCollision(o1,o2){
 
 //Collision between boxes
 function checkBoxCollision(object1, object2){
+    let o1, o2;
     //if an object is static, then they will never collide.
     //It also matters if both objects are dynamic, as the forces need to be calculated.
     //two dynamic objects have not been added yet
-    if (object1.moveable && object2.moveable){
+    if (object1.stiffness || object2.stiffness){
+        return;
+    }
+    else if (object1.moveable && object2.moveable){
         o1 = object1;
         o2 = object2;
     }
@@ -397,6 +508,23 @@ function checkBoxCollision(object1, object2){
     //value for the total intersection of the objects
     let intersectionX = 0;
     let intersectionY = 0;
+    
+
+    if (springSimulation){
+        if (o1.x < o2.x){
+            let dx = (o2.x - o1.x - o1.width);
+            o1.fx = (dx - springEquilibrium)*springStiffness*energyRetainment;
+            o2.fx = -(dx - springEquilibrium)*springStiffness*energyRetainment;
+        }
+        else if (o2.x < o1.x){
+            let dx = (o1.x - o2.x - o2.width);
+            o1.fx = -(dx - springEquilibrium)*springStiffness;
+            o2.fx = (dx - springEquilibrium)*springStiffness;
+
+        }
+            
+    }
+
     //checks if object 1 exists somewhere inside object 2 in the y plane, AND in the x plane
     if ((o1.y+o1.height > o2.y && o1.y < o2.y+o2.height) && (o1.x+o1.width > o2.x && o1.x<o2.x+o2.width)){
         // if both are true, the objects have collided/intersected, and we can continue
@@ -404,18 +532,29 @@ function checkBoxCollision(object1, object2){
         //now we check which plane has the most intersection, resolving a collision in the plane with the most intersection:
         intersectionX = (o1.x < o2.x)? o1.x+o1.width - o2.x : o2.x+o2.width - o1.x;
         intersectionY = (o1.y < o2.y)? o1.y+o1.height - o2.y : o2.y+o2.height - o1.y;
+
+        totalMomentumX = (o1.m*o1.vx + o2.m*o1.vx);
+        totalMomentumY = (o1.m*o1.vy + o2.m*o2.vy);
+
         if (intersectionY > intersectionX){
             //collision with o2 to the left of o1
             if (o1.x > o2.x){
                 o1.x = o2.x + o2.width;
+                if (elasticBoxCollision){
+                    o1.vx = totalMomentumX/(2*o1.m);
+                    o2.vx = -totalMomentumX/(2*o2.m);
+                }
             }
             //collision with o2 to the right of o1
             else{
                 o1.x =  o2.x - o1.width;
+                if (elasticBoxCollision){
+                    o1.vx = -totalMomentumX/(2*o1.m);
+                    o2.vx = totalMomentumX/(2*o2.m);
+                }
             }
             o1.fx = 0;
             o1.ax = 0;
-            o1.vx = 0;
             keyLock = false;
         }
         else{
@@ -449,7 +588,6 @@ function updateSimulation() {
                     }
                     else{
                         checkBoxCollision(o1, o2);
-                        //if the object is on a platform, the code kinda breaks if you run through 
                     }
                 }
             }
