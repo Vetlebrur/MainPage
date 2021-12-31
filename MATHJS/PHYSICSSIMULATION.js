@@ -547,7 +547,7 @@ function checkBoxCollision(object1, object2){
             }
             //collision with o2 to the right of o1
             else{
-                o1.x =  o2.x - o1.width;
+                o1.x = o2.x - o1.width;
                 if (elasticBoxCollision){
                     o1.vx = -totalMomentumX/(2*o1.m);
                     o2.vx = totalMomentumX/(2*o2.m);
