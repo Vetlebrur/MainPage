@@ -43,7 +43,7 @@ var particleMass = 10;
 //settings for the spring simulation
 var springSimulation = false;
 var springVertical = false;
-var springStiffness = 5;
+var springStiffness = 9;
 var springEquilibrium = 400;
 
 //game related settings
@@ -329,10 +329,8 @@ class box{
     }
     newPos(){
         if (this.moveable){
-            if (!springSimulation || springVertical){
-                this.fx += 0;
-                this.fy = ((gravity)? g*this.m : 0) - ((springSimulation && springVertical)?  (this.y-springEquilibrium)*springStiffness : 0);
-            }
+            this.fx = 0;
+            this.fy = ((gravity)? g*this.m : 0) - ((springSimulation && springVertical)?  (this.y-springEquilibrium)*springStiffness : 0);
             
             this.ax = this.fx/(framesPerSecond*this.m) ;
             this.ay = this.fy/(framesPerSecond*this.m);
