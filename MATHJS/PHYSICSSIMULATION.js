@@ -3,8 +3,15 @@ THINGS TO DO:
 
 Create elastic collisions with boxes, and make it possible for 2 dynamic boxes to collide and have a realistic collision.
 
+Create a possibility for friction to occur between the walls, and other boxes.
 
+Ability to change the simulation without reloading the page
 
+Input [type=range] and [type=number] for inserting values to the different simulations, and then reloading the simulation with a
+flick o' the switch. 
+Maybe also display the numbers of the velocity, position, and so on in the simulation.
+
+overall, great success. :)
 
 */
 
