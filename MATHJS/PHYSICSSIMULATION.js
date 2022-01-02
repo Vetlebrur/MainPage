@@ -51,7 +51,7 @@ var particleMass = 10;
 var springSimulation = false;
 var springVertical = false;
 var springStiffness = 9;
-var springEquilibrium = 400;
+var springEquilibrium = 200;
 
 //game related settings
 var controls = false;
@@ -153,7 +153,6 @@ function startSpringSimulation(){
     boxCollision = true;
     elasticBoxCollision = true;
     springSimulation = true;
-    friction = true;
     blueBox = new box(100, 600, 100, 100, boxMass, "blue", true);
     objects.push(blueBox);
     redBox = new box(800, 600, 100, 100, boxMass, "red", true);
@@ -336,7 +335,7 @@ class box{
     }
     newPos(){
         if (this.moveable){
-            this.fx = 0;
+            this.fx += 0;
             this.fy = ((gravity)? g*this.m : 0) - ((springSimulation && springVertical)?  (this.y-springEquilibrium)*springStiffness : 0);
             
             this.ax = this.fx/(framesPerSecond*this.m) ;

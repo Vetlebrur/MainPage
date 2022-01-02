@@ -6,7 +6,6 @@ for(i=0;i<11;i++){
     }
         t.push(r)
 }
-alert(t[4][7]);
 
 let personer = [["Hans",12],["Nils",3],["Sofie",5]]
 
@@ -122,3 +121,15 @@ function compareAge(a,b){
 
 }
 personer.sort(compareAge)
+
+
+
+var arr = [4,2,3,1];
+arr.splice(2);
+console.log(arr.length);
+
+
+
+
+
+balls[3].vx
