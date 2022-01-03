@@ -255,8 +255,6 @@ function createTurret(name,x,y){
             return;
     }
     towers.push(turret);
-    
-
 }
 
 
