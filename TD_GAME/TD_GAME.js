@@ -126,6 +126,12 @@ class enemy{
     }
 }
 
+document.addEventListener("keydown", (event) => {
+    if (event.keyCode === 49) {
+      createEnemy("runner");
+    }
+  });
+
 function createEnemy(name){
     let enemyType;
         switch (name){
@@ -138,6 +144,9 @@ function createEnemy(name){
             case ("joe"):
                 enemyType = new enemy(10, 20, "red", 40);
                 break;
+            default:
+                console.log("error: unkown enemy");
+                return;
         }
     enemies.push(enemyType);
 }
@@ -242,8 +251,8 @@ function createTurret(name,x,y){
             break;
 
         default:
-            turret = new tower(x, y, 100, "blue", 0, 0, 0);
-            break;
+            console.log("error: unkown enemy");
+            return;
     }
     towers.push(turret);
     
@@ -364,6 +373,8 @@ function renderFrame() {
 screen.start();
 createTurret("sniper");
 createEnemy("tank");
+createEnemy("normal")
+
 
 var levelTrack = new track(pathPoints, pathThickness, pathColor);
 var redEnemy = new enemy(enemySpeed, enemySize, enemyColor ,enemyHealth);
