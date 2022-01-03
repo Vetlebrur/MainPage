@@ -25,6 +25,29 @@ var projectiles = [];
 var playerHp = 100;
 var playerMoney = 500;
 
+
+document.addEventListener("keydown", (event) => {
+    let key = event.keyCode;
+    switch(key){
+        case 13: // enter button
+            screen.start(); 
+            break;
+         case 49: // 1 key
+            createEnemy("runner"); 
+            break;
+        case 50: // 2 key
+            createEnemy("tank");
+            break;
+        case 51: // 3 key
+            createEnemy("joe");
+            break;
+        default:
+            console.log("Error: unknown tower")
+            return;
+    }
+    
+  });
+
 var screen ={
     canvas : document.createElement("canvas"),
     start : function() {
@@ -33,15 +56,12 @@ var screen ={
         this.context = this.canvas.getContext("2d");
         document.getElementById("screen").insertBefore(this.canvas, document.getElementById("screen").childNodes[0]);
         this.interval = setInterval(renderFrame, 1000/framesPerSecond);
+        
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 }
-
-
-
-
 
 class enemy{
     constructor(speed, radius, color, health){
@@ -126,12 +146,6 @@ class enemy{
     }
 }
 
-document.addEventListener("keydown", (event) => {
-    if (event.keyCode === 49) {
-      createEnemy("runner");
-    }
-  });
-
 function createEnemy(name){
     let enemyType;
         switch (name){
@@ -152,7 +166,7 @@ function createEnemy(name){
 }
 
 class tower{
-    constructor (x,y,radius,color,attack,atkSpeed,range){
+    constructor (x, y, radius, color, damage, atkSpeed, range){
         this.index = towers.length;
 
         this.x = x;
@@ -160,23 +174,21 @@ class tower{
         this.r = radius;
         this.clr = color;
 
-        this.dmg = attack;
+        this.dmg = damage;
         this.spd = atkSpeed;
         this.rng = range;
 
-        this.cooldown = 0;
         this.loaded = true;
-        
     }
     draw(){
-        //range
-        let range = screen.context;
-        range.fillStyle = "#aaaaaaaa";
-        range.beginPath();
-        range.arc(this.x, this.y, this.rng, 0, Math.PI*2, true);
-        range.closePath();
-        range.fill();
-        //tower
+        //draws the range of the turret
+        // let range = screen.context;
+        // range.fillStyle = "#aaaaaa55";
+        // range.beginPath();
+        // range.arc(this.x, this.y, this.rng, 0, Math.PI*2, true);
+        // range.closePath();
+        // range.fill();
+        //draws the tower itself
         let ctx = screen.context;
         ctx.fillStyle = this.clr;
         ctx.beginPath();
@@ -194,29 +206,18 @@ class tower{
 
             if (d<this.rng){
                 //enemy is in the tower's range. So we try to fire
-
-                if (this.loaded){
+                if (this.loaded){ 
                     //we fire a bullet towards the enemy
-                    this.loaded = false;
-                    this.cooldown = this.spd*100;
-                    console.log(this.cooldown)
-                    setTimeout(() => {this.loaded = true}, this.cooldown)
+                    this.loaded = false; // Gun is no longer loaded
 
+                    setTimeout(() => {this.loaded = true}, this.spd*100) // make it loaded after a short while
 
-
-                    let bullet = new projectile(this.index, en.index, this.dmg)
+                    let bullet = new projectile(this.index, en.index, this.dmg) // create the projectile, travelling from the tower to the selected enemy
                     projectiles.push(bullet)
-
-                    console.log("bang");
-
                 }
-
                 return;
-
             }
-            
         }
-
     }
     checkStatus(){
         if(this.loaded){
@@ -229,9 +230,12 @@ class tower{
 
 
 screen.canvas.addEventListener("click", (event) => {
+    
     let xCoor = event.offsetX;
     let yCoor = event.offsetY;
-    createTurret("machineGun",xCoor,yCoor);
+    if (yCoor<400){
+        createTurret("machineGun",xCoor,yCoor);
+    }
     
 });
 
@@ -272,15 +276,16 @@ class projectile {
         this.dmg = damage;
 
         this.percent = 0;
-
-
     }
     move(){
         this.percent += 0.1;
-        let xy = getLineXYatPercent({x: this.tow.x, y: this.tow.y}, {x: this.ene.x, y: this.ene.y}, this.percent);
-        this.x = xy[0];
-        this.y = xy[1];
-
+        let dx = this.ene.x - this.tow.x;
+        let dy = this.ene.y - this.tow.y;
+        let X = this.tow.x + dx * this.percent;
+        let Y = this.tow.y + dy * this.percent;
+    
+        this.x = X;
+        this.y = Y;
     }
     draw(){
         let ctx = screen.context;
@@ -330,13 +335,29 @@ class track{
 
     }
 }
-
+class towerSelect{
+    constructor(){
+        this.x = 0;
+        this.y = 400;
+        this.height = this.y - screen.canvas.height;
+        this.width = 1000;
+        this.background = "brown";
+    }
+    draw(){
+        let ctx = screen.context;
+        ctx.beginPath();
+        ctx.fillStyle = this.background;
+        ctx.fillRect(this.x,this.y,this.width, this.height);
+    }
+}
+var levelTrack = new track(pathPoints, pathThickness, pathColor);
+var towerMenu = new towerSelect();
 
 function renderFrame() {
     screen.clear();
     levelTrack.draw();
+    towerMenu.draw()
     
-
     for (let to of towers){
         let loaded = to.checkStatus();
         if (loaded){
@@ -346,7 +367,6 @@ function renderFrame() {
         to.draw()
     }
     
-
     for (let en of enemies){
         let alive = en.checkStatus();
         if (alive){
@@ -364,24 +384,8 @@ function renderFrame() {
             pr.draw();
         } 
     }
-    
     time++;
 }
-
-screen.start();
-createTurret("sniper");
-createEnemy("tank");
-createEnemy("normal")
-
-
-var levelTrack = new track(pathPoints, pathThickness, pathColor);
-var redEnemy = new enemy(enemySpeed, enemySize, enemyColor ,enemyHealth);
-var blueTower = new tower(200,200, towerSize,"blue",towerDamage,towerAtkSpeed,towerRange);
-enemies.push(redEnemy);
-towers.push(blueTower);
-
-renderFrame();
-
 
 function getLineXYatPercent(startPt, endPt, percent) {
     let dx = endPt.x - startPt.x;
@@ -390,3 +394,5 @@ function getLineXYatPercent(startPt, endPt, percent) {
     let Y = startPt.y + dy * percent;
     return [X,Y];
 }
+
+
