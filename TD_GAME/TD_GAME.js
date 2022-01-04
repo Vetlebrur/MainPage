@@ -3,6 +3,7 @@ var framesPerSecond = 60;
 var time = 0;
 var absolutePercent = 0;
 var relativePercent = 0;
+var selectedTower = 0;
 
 var enemySpeed = 10;
 var enemyHealth = 40;
@@ -21,6 +22,7 @@ var pathColor = "grey";
 var enemies = [];
 var towers = [];
 var projectiles = [];
+var buttons = [];
 
 var playerHp = 100;
 var playerMoney = 500;
@@ -45,8 +47,7 @@ document.addEventListener("keydown", (event) => {
             console.log("Error: unknown tower")
             return;
     }
-    
-  });
+});
 
 var screen ={
     canvas : document.createElement("canvas"),
@@ -231,11 +232,16 @@ screen.canvas.addEventListener("click", (event) => {
     let xCoor = event.offsetX;
     let yCoor = event.offsetY;
     if (yCoor<400){
-        createTurret("machineGun",xCoor,yCoor);
+        createTurret(selectedTower,xCoor,yCoor);
     }
-    else if ((xCoor > towerMenu.box1x) && (yCoor > towerMenu.box1y)){
-        console.log("shee")
+    else{
 
+    }
+    for (let btn of buttons){
+        if ((xCoor > btn.x && xCoor<(btn.x+btn.width)) && (yCoor > btn.y && yCoor<(btn.y+btn.height))){
+            selectedTower = btn.towerSelect;
+            console.log("shee")
+        }
     }
 });
 
@@ -335,6 +341,7 @@ class track{
 
     }
 }
+
 class towerSelect {
     constructor(){
         this.x = 0;
@@ -342,12 +349,6 @@ class towerSelect {
         this.height = this.y - screen.canvas.height;
         this.width = 1000;
         this.background = "brown";
-        this.buttonColor = "white";
-
-        this.box1x = 20;
-        this.box1y = 420;
-        this.box1width = 50;
-        this.box1height = 50;
     }
     draw(){
         let ctx = screen.context;
@@ -355,14 +356,33 @@ class towerSelect {
         ctx.fillStyle = this.background;
         ctx.fillRect(this.x,this.y,this.width, this.height);
 
-        let box1 = screen.context;
-        box1.beginPath();
-        ctx.fillStyle = this.buttonColor;
-        ctx.fillRect(this.box1x, this.box1y, this.box1width, this.box1height);
     }
+}
+
+class button {
+    constructor(tower){
+        this.clr = "white";
+        this.towerSelect = tower;
+
+        this.x = 20+(70*buttons.length);
+        this.y = 420;
+        this.width = 50;
+        this.height = 50;
+    }
+    draw(){
+        let ctx = screen.context;
+        ctx.beginPath();
+        ctx.fillStyle = this.clr;
+        ctx.fillRect(this.x,this.y,this.width, this.height);
+    }
+
 }
 var levelTrack = new track(pathPoints, pathThickness, pathColor);
 var towerMenu = new towerSelect();
+var machineGunButton = new button("machineGun");
+buttons.push(machineGunButton);
+
+
 
 
 function renderFrame() {
@@ -390,6 +410,9 @@ function renderFrame() {
             pr.move();
             pr.draw();
         } 
+    }
+    for (let btn of buttons){
+        btn.draw();
     }
     time++;
 }
