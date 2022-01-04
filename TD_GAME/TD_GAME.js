@@ -361,12 +361,10 @@ function renderFrame() {
     for (let to of towers){
         let loaded = to.checkStatus();
         if (loaded){
-            to.shoot()
-            
+            to.shoot() 
         }
         to.draw()
     }
-    
     for (let en of enemies){
         let alive = en.checkStatus();
         if (alive){
@@ -375,7 +373,6 @@ function renderFrame() {
             en.draw();
         }
     }
-
     for (let pr of projectiles){
         let collided = pr.hit();
         if (!collided){
@@ -394,5 +391,3 @@ function getLineXYatPercent(startPt, endPt, percent) {
     let Y = startPt.y + dy * percent;
     return [X,Y];
 }
-
-
