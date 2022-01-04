@@ -103,11 +103,6 @@ function sorter(type){
         }
     }
 }
-
-
-
-
-
 function compareAge(a,b){
     if (a[1]<b[1]) {
         return 1;   
@@ -120,16 +115,5 @@ function compareAge(a,b){
     }
 
 }
-personer.sort(compareAge)
 
 
-
-var arr = [4,2,3,1];
-arr.splice(2);
-console.log(arr.length);
-
-
-
-
-
-balls[3].vx
