@@ -227,16 +227,16 @@ class tower{
     }
 }
 
-
-
 screen.canvas.addEventListener("click", (event) => {
-    
     let xCoor = event.offsetX;
     let yCoor = event.offsetY;
     if (yCoor<400){
         createTurret("machineGun",xCoor,yCoor);
     }
-    
+    else if ((xCoor > towerMenu.box1x) && (yCoor > towerMenu.box1y)){
+        console.log("shee")
+
+    }
 });
 
 function createTurret(name,x,y){
@@ -335,23 +335,35 @@ class track{
 
     }
 }
-class towerSelect{
+class towerSelect {
     constructor(){
         this.x = 0;
         this.y = 400;
         this.height = this.y - screen.canvas.height;
         this.width = 1000;
         this.background = "brown";
+        this.buttonColor = "white";
+
+        this.box1x = 20;
+        this.box1y = 420;
+        this.box1width = 50;
+        this.box1height = 50;
     }
     draw(){
         let ctx = screen.context;
         ctx.beginPath();
         ctx.fillStyle = this.background;
         ctx.fillRect(this.x,this.y,this.width, this.height);
+
+        let box1 = screen.context;
+        box1.beginPath();
+        ctx.fillStyle = this.buttonColor;
+        ctx.fillRect(this.box1x, this.box1y, this.box1width, this.box1height);
     }
 }
 var levelTrack = new track(pathPoints, pathThickness, pathColor);
 var towerMenu = new towerSelect();
+
 
 function renderFrame() {
     screen.clear();
@@ -369,7 +381,6 @@ function renderFrame() {
         let alive = en.checkStatus();
         if (alive){
             en.move();
-
             en.draw();
         }
     }
@@ -377,7 +388,6 @@ function renderFrame() {
         let collided = pr.hit();
         if (!collided){
             pr.move();
-
             pr.draw();
         } 
     }
