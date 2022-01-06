@@ -15,17 +15,19 @@ var towerAtkSpeed = 5;
 var towerSize = 20;
 var towerRange = 200;
 
-var pathPoints = "M 100 0 L 100 350 300 350 300 100 500 100 500 350 700 350 700 100 900 100";
-var pathThickness = 50;
-var pathColor = "grey";
+//var pathPoints = "M 100 0 L 100 350 300 350 300 100 500 100 500 350 700 350 700 100 900 100";
+var pathPoints = [[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[2,6],[3,6],[4,6],[4,5],[4,4],[4,3],[4,2],[4,1],[5,1],[6,1],[7,1],[7,2],[7,3],[7,4]];
+//var pathThickness = 50;
+//var pathColor = "grey";
 
 var enemies = [];
 var towers = [];
 var projectiles = [];
 var buttons = [];
+var path = [];
 
 var playerHp = 100;
-var playerMoney = 500;
+var playerMoney = 5000;
 
 
 document.addEventListener("keydown", (event) => {
@@ -44,7 +46,7 @@ document.addEventListener("keydown", (event) => {
             createEnemy("joe");
             break;
         default:
-            console.log("Error: unknown tower")
+            console.log("Error: unknown enemy")
             return;
     }
 });
@@ -76,9 +78,10 @@ class enemy{
 
         this.percent = 0;
         this.track = 0;
+        this.reachedEnd = false;
 
-        this.x = 100;
-        this.y = 0; 
+        this.x = pathPoints[0][0]*50+25;
+        this.y = pathPoints[0][1]*50+25; 
         this.t = 0;
     }
     draw(){
@@ -90,54 +93,45 @@ class enemy{
         ctx.fill();
     }
     move(){
-        let xy = [];
-        let relativePercent;
-        switch (true){
-            case (this.percent < 25):
-                relativePercent = this.percent / 24;
-                xy = getLineXYatPercent({x: 100,y: 0}, {x: 100,y: 350}, relativePercent);
-                break;
-            case (this.percent < 50):
-                relativePercent = (this.percent - 25) / 24
-                xy = getLineXYatPercent({x: 100,y: 350}, {x: 300,y: 350}, relativePercent);
-                break;
-            case (this.percent < 75):
-                relativePercent = (this.percent - 50) / 24
-                xy = getLineXYatPercent({x: 300,y: 350}, {x: 300,y: 100}, relativePercent);
-                break;
-            case (this.percent < 100):
-                relativePercent = (this.percent - 75) / 25
-                xy = getLineXYatPercent({x: 300,y: 100}, {x: 500,y: 100}, relativePercent);
-                break;
-            case (this.percent < 125):
-                relativePercent = (this.percent - 100) / 25
-                xy = getLineXYatPercent({x: 500,y: 100}, {x: 500,y: 350}, relativePercent);
-                break;
-            case (this.percent < 150):
-                relativePercent = (this.percent - 125) / 25
-                xy = getLineXYatPercent({x: 500,y: 350}, {x: 700,y: 350}, relativePercent);
-                break;
-            case (this.percent < 175):
-                relativePercent = (this.percent - 150) / 25
-                xy = getLineXYatPercent({x: 700,y: 350}, {x: 700,y: 100}, relativePercent);
-                break;
-            case (this.percent < 200):
-                relativePercent = (this.percent - 175) / 25
-                xy = getLineXYatPercent({x: 700,y: 100}, {x: 900,y: 100}, relativePercent);
-                break;
-            default:
+        if (this.percent >= 100){
+            this.percent = 0;
+            this.track += 1;
+            if (this.track == pathPoints.length-1){
+                this.reachedEnd = true;
                 return;
+            
+            }
         }
-        this.x = xy[0];
-        this.y = xy[1]; 
-        this.percent += (this.percent<200)? 0.5 : 0;
 
+        if (pathPoints[this.track][1] == pathPoints[this.track+1][1]){ // means the change in direction is not downward or upward
+            this.x = (pathPoints[this.track][0] < pathPoints[this.track+1][0])? this.percent*0.5 : this.percent*-0.5;
+            this.x += pathPoints[this.track][0]*50 +25;
+        }
+        else if (pathPoints[this.track][0] == pathPoints[this.track+1][0]){ //means that the path travels downwards, since no change in x value
+            this.y = (pathPoints[this.track][1] < pathPoints[this.track+1][1])? this.percent*0.5 : this.percent*-0.5;
+            this.y += pathPoints[this.track][1]*50 +25;
+        }
+        else{
+            console.log("error: path error");
+        }
+        this.percent+= this.spd;
     }
     checkStatus(){
         if(this.hp <= 0){
             playerMoney += this.value;
-            enemies.splice(this.index,1);
 
+            enemies.splice(this.index,1);
+            for (let en of enemies) {
+                if (en.index>this.index){
+                    en.index--;
+                }
+            }
+            return false;
+        }
+        else if (this.reachedEnd){
+            playerHp -= this.hp;
+
+            enemies.splice(this.index,1);
             for (let en of enemies) {
                 if (en.index>this.index){
                     en.index--;
@@ -237,13 +231,10 @@ screen.canvas.addEventListener("click", (event) => {
     if (yCoor<400){
         createTurret(selectedTower,xCoor,yCoor);
     }
-    else{
-
-    }
     for (let btn of buttons){
         if ((xCoor > btn.x && xCoor<(btn.x+btn.width)) && (yCoor > btn.y && yCoor<(btn.y+btn.height))){
             selectedTower = btn.towerSelect;
-            console.log("shee")
+            console.log(`selected tower: ${selectedTower}`)
         }
     }
 });
@@ -256,26 +247,36 @@ function createTurret(name,x,y){
             break;
 
         case ("sniper"):
-            turret = new tower(x, y, 25, "grey", 30, 20, 400, 400);
+            turret = new tower(x, y, 25, "green", 30, 20, 10000, 400);
             break;
 
         case ("noe"):
-            turret = new tower(x, y, 30, "grey", 5, 2, 150, 150);
+            turret = new tower(x, y, 30, "blue", 5, 2, 150, 150);
             break;
 
         default:
             console.log("error: unkown enemy");
             return;
     }
-    if (turret.cost <= playerMoney){
+    for (otherTurret of towers){
+        let dx = turret.x - otherTurret.x;
+        let dy = turret.y - otherTurret.y;
+        let d = Math.sqrt(Math.pow(dy,2)+Math.pow(dx,2));
+        console.log(otherTurret.r + turret.r)
+        if ((d<(otherTurret.r + turret.r))){
+            console.log("error: not enough space");
+            return; // not enough space
+        }
+    }
+    if ((turret.cost <= playerMoney)){
         playerMoney-=turret.cost;
         towers.push(turret);
     }
     else{
-        console.log("error: not enough money to buy turret")
+        console.log("error: not enough money to buy turret");
+        return;
     }
 }
-
 
 class projectile {
     constructor(towerIndex, enemyIndex,damage){
@@ -289,18 +290,14 @@ class projectile {
 
         this.r = 5;
         this.dmg = damage;
-
         this.percent = 0;
     }
     move(){
         this.percent += 0.1;
         let dx = this.ene.x - this.tow.x;
         let dy = this.ene.y - this.tow.y;
-        let X = this.tow.x + dx * this.percent;
-        let Y = this.tow.y + dy * this.percent;
-    
-        this.x = X;
-        this.y = Y;
+        this.x = this.tow.x + dx * this.percent;
+        this.y = this.tow.y + dy * this.percent;
     }
     draw(){
         let ctx = screen.context;
@@ -315,17 +312,13 @@ class projectile {
         let dy = this.y - this.ene.y;
         let d = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2))
         if (d<this.r+this.ene.r){
-
             this.ene.hp -= this.dmg;
-            
-
             projectiles.splice(this.index,1);
             for (let pr of projectiles) {
                 if (pr.index>this.index){
                     pr.index--;
                 }
             }
-
             return true;
         }
         else {
@@ -334,20 +327,19 @@ class projectile {
     }
 }
 
-class track{
-    constructor(path, girth, color){
-        this.path = path;
-        this.width = girth;
-        this.color = color;
+class pathPart{
+    constructor(x,y){
+        this.x = x*50;
+        this.y = y*50;
+        this.width = 50;
+        this.height = 50;
+        this.clr = "grey";
     }
     draw(){
         let ctx = screen.context;
-        let p = new Path2D(pathPoints);
         ctx.beginPath();
-        ctx.lineWidth = this.width;
-        ctx.strokeStyle = this.color;
-        ctx.stroke(p);
-
+        ctx.fillStyle = this.clr;
+        ctx.fillRect(this.x,this.y,this.width, this.height);
     }
 }
 
@@ -364,7 +356,6 @@ class towerSelect {
         ctx.beginPath();
         ctx.fillStyle = this.background;
         ctx.fillRect(this.x,this.y,this.width, this.height);
-
     }
 }
 
@@ -374,6 +365,7 @@ var text = {
         let money = `$: ${playerMoney}`;
         let ctx = screen.context;
         ctx.font = "30px Arial";
+        ctx.fillStyle = "black";
         ctx.fillText(hp, 10, 50);
         ctx.fillText(money, 10, 100);
     }
@@ -394,22 +386,28 @@ class button {
         ctx.fillStyle = this.clr;
         ctx.fillRect(this.x,this.y,this.width, this.height);
     }
-
 }
-var levelTrack = new track(pathPoints, pathThickness, pathColor);
+function createButton(towerType){
+    let newButton = new button(towerType)
+    buttons.push(newButton);
+}
+
+for (let i = 0; i < pathPoints.length; i++) {
+    let pathpart = new pathPart(pathPoints[i][0],pathPoints[i][1]);
+    path.push(pathpart);
+}
 var towerMenu = new towerSelect();
-var machineGunButton = new button("machineGun");
-buttons.push(machineGunButton);
-
-
-
+createButton("machineGun");
+createButton("sniper")
+createButton("noe")
 
 function renderFrame() {
     screen.clear();
-    text.draw();
-    levelTrack.draw();
     towerMenu.draw()
-    
+
+    for (let pathparts of path){
+        pathparts.draw();
+    }
     for (let to of towers){
         let loaded = to.checkStatus();
         if (loaded){
@@ -434,13 +432,6 @@ function renderFrame() {
     for (let btn of buttons){
         btn.draw();
     }
+    text.draw();
     time++;
-}
-
-function getLineXYatPercent(startPt, endPt, percent) {
-    let dx = endPt.x - startPt.x;
-    let dy = endPt.y - startPt.y;
-    let X = startPt.x + dx * percent;
-    let Y = startPt.y + dy * percent;
-    return [X,Y];
 }
