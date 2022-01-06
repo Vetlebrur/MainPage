@@ -1,19 +1,20 @@
 *{
     margin: 0;
-    background:navy;
+    background:black;
+    box-sizing: border-box;
 }
 #buttons{
     position: absolute;
     top: 0;
-    left: 0;
+    left: 40vw;
     color:azure;
     display: flex;
-
+    text-align: center;
 }
 .button{
+    width:10vw;
     padding:1em 2em;
     background-color:cadetblue;
     border-radius: 5px;
-    border: 1px solid grey;
-
+    border: 3px solid grey;
 }
