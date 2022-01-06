@@ -65,13 +65,14 @@ var screen ={
 }
 
 class enemy{
-    constructor(speed, radius, color, health){
+    constructor(speed, radius, color, health, value){
         this.index = enemies.length;
 
         this.hp = health;
         this.clr = color;
         this.r = radius;
         this.spd = speed;
+        this.value = value;
 
         this.percent = 0;
         this.track = 0;
@@ -134,6 +135,7 @@ class enemy{
     }
     checkStatus(){
         if(this.hp <= 0){
+            playerMoney += this.value;
             enemies.splice(this.index,1);
 
             for (let en of enemies) {
@@ -151,13 +153,13 @@ function createEnemy(name){
     let enemyType;
         switch (name){
             case ("runner"):
-                enemyType = new enemy(20, 10, "brown", 20);
+                enemyType = new enemy(20, 10, "brown", 20, 10);
                 break;
             case ("tank"):
-                enemyType = new enemy(5, 30, "green", 100);
+                enemyType = new enemy(5, 30, "green", 100, 50);
                 break;
             case ("joe"):
-                enemyType = new enemy(10, 20, "red", 40);
+                enemyType = new enemy(10, 20, "red", 40, 100);
                 break;
             default:
                 console.log("error: unkown enemy");
@@ -167,13 +169,14 @@ function createEnemy(name){
 }
 
 class tower{
-    constructor (x, y, radius, color, damage, atkSpeed, range){
+    constructor (x, y, radius, color, damage, atkSpeed, range, cost){
         this.index = towers.length;
 
         this.x = x;
         this.y = y;
         this.r = radius;
         this.clr = color;
+        this.cost = cost;
 
         this.dmg = damage;
         this.spd = atkSpeed;
@@ -249,22 +252,28 @@ function createTurret(name,x,y){
     let turret;
     switch(name){
         case ("machineGun"):
-            turret = new tower(x, y, 30, "grey", 5, 2, 150);
+            turret = new tower(x, y, 30, "grey", 5, 2, 150, 200);
             break;
 
         case ("sniper"):
-            turret = new tower(x, y, 25, "grey", 30, 20, 400);
+            turret = new tower(x, y, 25, "grey", 30, 20, 400, 400);
             break;
 
         case ("noe"):
-            turret = new tower(x, y, 30, "grey", 5, 2, 150);
+            turret = new tower(x, y, 30, "grey", 5, 2, 150, 150);
             break;
 
         default:
             console.log("error: unkown enemy");
             return;
     }
-    towers.push(turret);
+    if (turret.cost <= playerMoney){
+        playerMoney-=turret.cost;
+        towers.push(turret);
+    }
+    else{
+        console.log("error: not enough money to buy turret")
+    }
 }
 
 
@@ -359,6 +368,16 @@ class towerSelect {
     }
 }
 
+var text = {
+    draw: function () {
+        let hp = `HP: ${playerHp}`;
+        let money = `$: ${playerMoney}`;
+        let ctx = screen.context;
+        ctx.font = "30px Arial";
+        ctx.fillText(hp, 10, 50);
+        ctx.fillText(money, 10, 100);
+    }
+}
 class button {
     constructor(tower){
         this.clr = "white";
@@ -387,6 +406,7 @@ buttons.push(machineGunButton);
 
 function renderFrame() {
     screen.clear();
+    text.draw();
     levelTrack.draw();
     towerMenu.draw()
     
