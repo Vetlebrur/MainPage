@@ -16,7 +16,12 @@ var towerSize = 20;
 var towerRange = 200;
 
 //var pathPoints = "M 100 0 L 100 350 300 350 300 100 500 100 500 350 700 350 700 100 900 100";
-var pathPoints = [[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[2,6],[3,6],[4,6],[4,5],[4,4],[4,3],[4,2],[4,1],[5,1],[6,1],[7,1],[7,2],[7,3],[7,4]];
+var pathPoints =[
+[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[2,6],[3,6],[4,6],[4,5],[4,4],[4,3],[4,2],[4,1],
+[5,1],[6,1],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[8,6],[9,6],[10,6],
+[10,5],[10,4],[10,3],[10,2],[10,1],[11,1],[12,1],[13,1],[13,2],[13,3],[13,4],[13,5],[13,6],
+[14,6],[15,6],[16,6],[16,5],[16,4],[16,3],[16,2],[16,1],[17,1],[18,1],[19,1],[20,1]
+];
 //var pathThickness = 50;
 //var pathColor = "grey";
 
@@ -129,7 +134,7 @@ class enemy{
             return false;
         }
         else if (this.reachedEnd){
-            playerHp -= this.hp;
+            playerHp -= 1;
 
             enemies.splice(this.index,1);
             for (let en of enemies) {
@@ -258,7 +263,7 @@ function createTurret(name,x,y){
             console.log("error: unkown enemy");
             return;
     }
-    for (otherTurret of towers){
+    for (otherTurret of towers){ // checks if other turrets are occupying the space
         let dx = turret.x - otherTurret.x;
         let dy = turret.y - otherTurret.y;
         let d = Math.sqrt(Math.pow(dy,2)+Math.pow(dx,2));
@@ -266,6 +271,14 @@ function createTurret(name,x,y){
         if ((d<(otherTurret.r + turret.r))){
             console.log("error: not enough space");
             return; // not enough space
+        }
+    }
+    for (let tiles of path){
+        if (!(turret.x + turret.r < tiles.x || turret.x - turret.r > tiles.x + tiles.width)){
+            if (!(turret.y + turret.r < tiles.y || turret.y - turret.r > tiles.y + tiles.height)){
+                console.log(`error: intersecting path with tile nr: ${path.indexOf(tiles)}`);
+                return;
+            }
         }
     }
     if ((turret.cost <= playerMoney)){
@@ -366,8 +379,8 @@ var text = {
         let ctx = screen.context;
         ctx.font = "30px Arial";
         ctx.fillStyle = "black";
-        ctx.fillText(hp, 10, 50);
-        ctx.fillText(money, 10, 100);
+        ctx.fillText(hp, 850, 500);
+        ctx.fillText(money, 850, 550);
     }
 }
 class button {
