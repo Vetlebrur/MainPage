@@ -1,29 +1,27 @@
+//player settings
+var playerHp = 100;
+var playerMoney = 1000;
+
 //settings
 var framesPerSecond = 60;
-var time = 0;
-var absolutePercent = 0;
-var relativePercent = 0;
 var selectedTower = 0;
 
-//var pathPoints = "M 100 0 L 100 350 300 350 300 100 500 100 500 350 700 350 700 100 900 100";
 var pathPoints =[
-[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[2,6],[3,6],[4,6],[4,5],[4,4],[4,3],[4,2],[4,1],
-[5,1],[6,1],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[8,6],[9,6],[10,6],
-[10,5],[10,4],[10,3],[10,2],[10,1],[11,1],[12,1],[13,1],[13,2],[13,3],[13,4],[13,5],[13,6],
-[12,6],[11,6],[10,6],[10,5],[10,4],[10,3],[10,2],[10,1],[11,1],[12,1],[13,1],[13,2],[13,3],[13,4],[13,5],[13,6],
-[14,6],[15,6],[16,6],[16,5],[16,4],[16,3],[16,2],[16,1],[17,1],[18,1],[19,1],[20,1]
-];
-//var pathThickness = 50;
-//var pathColor = "grey";
+[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[2,6],[3,6],[4,6],[4,5],[4,4],
+[4,3],[4,2],[4,1],[5,1],[6,1],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[8,6],
+[9,6],[10,6],[10,5],[10,4],[10,3],[10,2],[10,1],[11,1],[12,1],[13,1],
+[13,2],[13,3],[13,4],[13,5],[13,6],[12,6],[11,6],[10,6],[10,5],[10,4],
+[10,3],[10,2],[10,1],[11,1],[12,1],[13,1],[13,2],[13,3],[13,4],[13,5],
+[13,6],[14,6],[15,6],[16,6],[16,5],[16,4],[16,3],[16,2],[16,1],[17,1],
+[18,1],[19,1],[20,1]];
 
+//creating arrays for objects
 var enemies = [];
 var towers = [];
 var projectiles = [];
 var buttons = [];
 var path = [];
 
-var playerHp = 100;
-var playerMoney = 1000;
 
 
 document.addEventListener("keydown", (event) => {
@@ -175,14 +173,6 @@ class tower{
         this.loaded = true;
     }
     draw(){
-        //draws the range of the turret
-        // let range = screen.context;
-        // range.fillStyle = "#aaaaaa55";
-        // range.beginPath();
-        // range.arc(this.x, this.y, this.rng, 0, Math.PI*2, true);
-        // range.closePath();
-        // range.fill();
-        //draws the tower itself
         let ctx = screen.context;
         ctx.fillStyle = this.clr;
         ctx.beginPath();
@@ -241,15 +231,12 @@ function createTurret(name,x,y){
         case ("machineGun"):
             turret = new tower(x, y, 30, "grey", 5, 2, 150, 200);
             break;
-
         case ("sniper"):
             turret = new tower(x, y, 25, "green", 30, 20, 10000, 400);
             break;
-
         case ("laser"):
             turret = new tower(x, y, 30, "red", 1, 0.1, 150, 150);
             break;
-
         default:
             console.log("error: unkown enemy");
             return;
@@ -363,17 +350,7 @@ class towerSelect {
     }
 }
 
-var text = {
-    draw: function () {
-        let hp = `HP: ${playerHp}`;
-        let money = `$: ${playerMoney}`;
-        let ctx = screen.context;
-        ctx.font = "30px Arial";
-        ctx.fillStyle = "black";
-        ctx.fillText(hp, 850, 500);
-        ctx.fillText(money, 850, 550);
-    }
-}
+
 class button {
     constructor(tower){
         this.clr = "white";
@@ -396,16 +373,28 @@ function createButton(towerType){
     buttons.push(newButton);
 }
 
+//Creation of all objects on startup
 for (let i = 0; i < pathPoints.length; i++) {
     let pathpart = new pathPart(pathPoints[i][0],pathPoints[i][1]);
     path.push(pathpart);
+}
+var text = {
+    draw: function () {
+        let hp = `HP: ${playerHp}`;
+        let money = `$: ${playerMoney}`;
+        let ctx = screen.context;
+        ctx.font = "30px Arial";
+        ctx.fillStyle = "black";
+        ctx.fillText(hp, 850, 500);
+        ctx.fillText(money, 850, 550);
+    }
 }
 var towerMenu = new towerSelect();
 createButton("machineGun");
 createButton("sniper")
 createButton("laser")
 
-function renderFrame() {
+function renderFrame() { //clears the screen, and draws the objects anew
     screen.clear();
     towerMenu.draw()
 
@@ -435,5 +424,4 @@ function renderFrame() {
     buttons.forEach(btn => btn.draw());
 
     text.draw();
-    time++;
 }
