@@ -5,15 +5,15 @@ var absolutePercent = 0;
 var relativePercent = 0;
 var selectedTower = 0;
 
-var enemySpeed = 10;
-var enemyHealth = 40;
-var enemySize = 55;
-var enemyColor = "red";
+// var enemySpeed = 10;
+// var enemyHealth = 40;
+// var enemySize = 55;
+// var enemyColor = "red";
 
-var towerDamage = 10;
-var towerAtkSpeed = 5;
-var towerSize = 20;
-var towerRange = 200;
+// var towerDamage = 10;
+// var towerAtkSpeed = 5;
+// var towerSize = 20;
+// var towerRange = 200;
 
 //var pathPoints = "M 100 0 L 100 350 300 350 300 100 500 100 500 350 700 350 700 100 900 100";
 var pathPoints =[
@@ -33,7 +33,7 @@ var buttons = [];
 var path = [];
 
 var playerHp = 100;
-var playerMoney = 5000;
+var playerMoney = 1000;
 
 
 document.addEventListener("keydown", (event) => {
@@ -256,8 +256,8 @@ function createTurret(name,x,y){
             turret = new tower(x, y, 25, "green", 30, 20, 10000, 400);
             break;
 
-        case ("noe"):
-            turret = new tower(x, y, 30, "blue", 5, 2, 150, 150);
+        case ("laser"):
+            turret = new tower(x, y, 30, "red", 1, 0.1, 150, 150);
             break;
 
         default:
@@ -413,7 +413,7 @@ for (let i = 0; i < pathPoints.length; i++) {
 var towerMenu = new towerSelect();
 createButton("machineGun");
 createButton("sniper")
-createButton("noe")
+createButton("laser")
 
 function renderFrame() {
     screen.clear();
