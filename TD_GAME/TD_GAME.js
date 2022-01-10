@@ -5,16 +5,6 @@ var absolutePercent = 0;
 var relativePercent = 0;
 var selectedTower = 0;
 
-// var enemySpeed = 10;
-// var enemyHealth = 40;
-// var enemySize = 55;
-// var enemyColor = "red";
-
-// var towerDamage = 10;
-// var towerAtkSpeed = 5;
-// var towerSize = 20;
-// var towerRange = 200;
-
 //var pathPoints = "M 100 0 L 100 350 300 350 300 100 500 100 500 350 700 350 700 100 900 100";
 var pathPoints =[
 [1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[2,6],[3,6],[4,6],[4,5],[4,4],[4,3],[4,2],[4,1],
