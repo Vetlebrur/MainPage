@@ -234,7 +234,7 @@ class tower{
 screen.canvas.addEventListener("click", (event) => {
     let xCoor = event.offsetX;
     let yCoor = event.offsetY;
-    if (yCoor<400){
+    if (yCoor<370){
         createTurret(selectedTower,xCoor,yCoor);
     }
     for (let btn of buttons){
