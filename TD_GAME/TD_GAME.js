@@ -419,7 +419,7 @@ function renderFrame() {
     screen.clear();
     towerMenu.draw()
 
-    path.map(pathTile => pathTile.draw());
+    path.forEach(pathTile => pathTile.draw());
 
     for (let to of towers){
         let loaded = to.checkStatus();
@@ -442,7 +442,7 @@ function renderFrame() {
             pr.draw();
         } 
     }
-    buttons.map(btn => btn.draw());
+    buttons.forEach(btn => btn.draw());
 
     text.draw();
     time++;
