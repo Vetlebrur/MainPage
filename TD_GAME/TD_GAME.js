@@ -20,6 +20,7 @@ var pathPoints =[
 [1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[2,6],[3,6],[4,6],[4,5],[4,4],[4,3],[4,2],[4,1],
 [5,1],[6,1],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[8,6],[9,6],[10,6],
 [10,5],[10,4],[10,3],[10,2],[10,1],[11,1],[12,1],[13,1],[13,2],[13,3],[13,4],[13,5],[13,6],
+[12,6],[11,6],[10,6],[10,5],[10,4],[10,3],[10,2],[10,1],[11,1],[12,1],[13,1],[13,2],[13,3],[13,4],[13,5],[13,6],
 [14,6],[15,6],[16,6],[16,5],[16,4],[16,3],[16,2],[16,1],[17,1],[18,1],[19,1],[20,1]
 ];
 //var pathThickness = 50;
@@ -418,9 +419,8 @@ function renderFrame() {
     screen.clear();
     towerMenu.draw()
 
-    for (let pathparts of path){
-        pathparts.draw();
-    }
+    path.map(pathTile => pathTile.draw());
+
     for (let to of towers){
         let loaded = to.checkStatus();
         if (loaded){
@@ -442,9 +442,8 @@ function renderFrame() {
             pr.draw();
         } 
     }
-    for (let btn of buttons){
-        btn.draw();
-    }
+    buttons.map(btn => btn.draw());
+
     text.draw();
     time++;
 }
