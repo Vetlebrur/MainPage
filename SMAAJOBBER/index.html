@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toil</title>
+    <link rel="stylesheet" href="TOIL.css">
+
+</head>
+<body>
+    <nav>
+        <ul>
+            <a href="index.html">
+                <svg viewBox="0 0 480 180" id="logoSVG">
+                    <path stroke="blue" stroke-width="1" fill="blue" id="t" d="M 0 10 L 0 60 40 60 40 170 90 170 90 60 120 60 160 10"></path>
+                    <circle stroke="blue" stroke-width="40" fill="transparent" id="o" cx="210" cy="100" r="60"></circle>
+                    <path stroke="blue" stroke-width="1" fill="blue" id="i" d="M 300 50 300 170 350 170 350 90"></path>
+                    <path stroke="#ffb703" stroke-width="1" fill="#fb8500" id="prikkOverI" d="M 300 10 300 40 350 80 350 50"></path>
+                    <path stroke="blue" stroke-width="1" fill="blue" id="l" d="M 360 10 360 170 480 170 440 130 400 130 400 10"></path>
+                </svg>
+            </a>
+        </ul>
+        <ul id="navMiddleBtnUl">
+            <div onclick="openCreateListingMenu()">Create listing</div>
+            <div>Browse listings</div>
+        </ul>
+        <ul>
+            <a href="profile.html">
+                <svg viewBox="0 0 100 100" id="profileSVG">
+                    <circle fill="grey" cx="50" cy="50" r="50"></circle>
+                    <circle fill="white" cx="50" cy="40" r="20"></circle>
+                    <circle fill="white" cx="50" cy="100" r="50"></circle>
+                    <circle stroke-width="40" stroke="skyblue" fill="transparent" cx="50" cy=50 r="70"></circle>
+                </svg>
+            </a>
+        </ul>
+    </nav>
+
+    <section id="main">
+        <h2 id="mainHeader">Find a job</h2>
+        <div id="sortMenu">
+            <label for="inputSearch">Search:</label>
+            <input type="search" name="search" id="inputSearch"> 
+
+            <label for="inputSalary">Select salary:</label>
+            <input type="range" name="salary" id="inputSalary" min="10" max="1000" step="10" value="200"> 
+            <span id="inputSalaryVal">200$</span>
+
+            <label for="inputSelect"> Select job type:</label>
+            <select name="jobTypes" id="inputSelect">
+                <option value="" selected>any</option>
+                <option value="painting">painting</option>
+                <option value="carpentry">carpentry</option>
+                <option value="construction">construction</option>
+                <option value="crafts">crafts</option>
+                <option value="transport">transport</option>
+            </select> 
+            
+            <label for="inputCity">Location</label>
+            <select name="city" id="inputCity">
+                <option value="" selected>any</option>
+                <option value="Oslo">Oslo</option>
+                <option value="Trondheim">Trondheim</option>
+                <option value="Tønsberg">Tønsberg</option>
+                <option value="Bergen">Bergen</option>
+                <option value="Molde">Molde</option>
+            </select>
+
+            <div class="searchBtn" onclick="filterListings()">Find a job</div>
+           
+
+        </div>
+        <div id="jobGrid">
+            <!--
+            <div class="jobListing" onclick="viewListing(this)">
+                <h2>Trenger ny stol</h2>
+                <img src="images/carpentry.jpg" alt="chair">
+                <div>
+                    <p>
+                        200$ 
+                    </p>
+                    <p>
+                        Trondheim
+                    </p>
+                </div>
+            </div>
+            --> 
+        </div>
+
+    </section>
+    <footer>
+        Contact information:
+    </footer>
+    <div id="createListingMenu">
+        <h2>Create Listing</h2>
+
+        <label for="listingTitle">Title</label>
+        <input name="title" id="listingTitle"> 
+
+        <label for="listingPayment">Insert Payment</label>
+        <input type="number" name="payment" id="listingPayment" min="10" > 
+
+        <label for="listingType"> Select job type</label>
+        <select name="type" id="listingType">
+            <option value="" selected>any</option>
+            <option value="painting">painting</option>
+            <option value="carpentry">carpentry</option>
+            <option value="construction">construction</option>
+            <option value="crafts">crafts</option>
+            <option value="transport">transport</option>
+            <option value="other">other</option>
+        </select> 
+        
+        <label for="listingCity">Location</label>
+        <select name="city" id="listingCity">
+            <option value="" selected>any</option>
+            <option value="Oslo">Oslo</option>
+            <option value="Trondheim">Trondheim</option>
+            <option value="Tønsberg">Tønsberg</option>
+            <option value="Bergen">Bergen</option>
+            <option value="Molde">Molde</option>
+        </select>
+
+        <label for="listingDescription">Description</label>
+        <textarea name="description" id="listingDescription" cols="30" rows="10"></textarea>
+
+        <div class="createBtn" onclick="createListing()">Create listing</div>
+        <div id="xBtn" onclick="openCreateListingMenu()">&#xd7;</div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.0/firebase-firestore.js"></script>
+    <script src="TOIL.js"></script>
+
+</body>
+</html>
