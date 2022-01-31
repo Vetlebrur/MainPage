@@ -30,7 +30,10 @@ console.log("Initialized the firebase app");
 // DB er vår kobling til databasen.
 let db  = firebase.firestore();
 
-db.collection("jobs").onSnapshot(snapshot =>{ //Updates the list everytime a change occurs in the database
+
+ //Updates the list everytime a change occurs in the database
+db.collection("Jobs").onSnapshot(snapshot =>{
+    console.log("IM GOING THROUGH CHANGES");
     updateListings();
 });
 function updateListings(){
@@ -98,6 +101,7 @@ function viewListing(selectedListing){
 }
 
 document.getElementById("main").onclick = function(e) {
+    if (!createListingMenuOpen){return;}
     if(e.target != document.getElementById('createListingMenu')) {
         openCreateListingMenu()
     }
