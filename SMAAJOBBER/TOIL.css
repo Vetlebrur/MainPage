@@ -101,7 +101,7 @@ nav > ul:nth-child(2) > div:active{
     grid-area:g;
     display: grid;
     grid-template-columns:repeat(3, 1fr); 
-    gap: 20px 30px ;
+    gap: 20px 30px;
 }
 #jobGrid>div{
     border-radius: 10px;
