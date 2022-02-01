@@ -9,6 +9,8 @@ var searchBtnEl = document.querySelector("#searchBtn");
 
 var jobListingGridEl = document.querySelector("#jobGrid");
 
+var viewedListing = document.querySelector("#viewedListing");
+
 var createListingEl = document.querySelector("#createListingMenu");
 var createListingTitleEl = document.querySelector("#listingTitle");
 var createListingPaymentEl = document.querySelector("#listingPayment");
@@ -97,8 +99,11 @@ function filterListings(aes){
 
 function viewListing(selectedListing){
     console.log(`viewing ${selectedListing}`);
+    viewedListing.style.transform ="translateX(0)";
 
-
+}
+function stopViewListing(){
+    viewedListing.style.transform ="translateX(140%)";
 
 }
 

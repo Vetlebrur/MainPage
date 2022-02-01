@@ -11,7 +11,7 @@
 <body>
     <nav>
         <ul>
-            <a href="index.html">
+            <a href="index.html" onclick="stopViewListing()">
                 <svg viewBox="0 0 480 180" id="logoSVG">
                     <path stroke="blue" stroke-width="1" fill="blue" id="t" d="M 0 10 L 0 60 40 60 40 170 90 170 90 60 120 60 160 10"></path>
                     <circle stroke="blue" stroke-width="40" fill="transparent" id="o" cx="210" cy="100" r="60"></circle>
@@ -127,6 +127,12 @@
 
         <div class="createBtn" onclick="createListing()">Create listing</div>
         <div id="xBtn" onclick="openCreateListingMenu()">&#xd7;</div>
+    </div>
+    <div id="viewedListing">
+        <h2 id="viewedListingTitle"></h2>
+        <img alt="pic" id="viewedListingImg">
+        <div id="viewedListingText"></div>
+
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.6.0/firebase-app.js"></script>
