@@ -3,16 +3,6 @@ var searchEl = document.querySelector("#inputSearch");
 var salaryEl = document.querySelector("#inputSalary");
 var salarySpanEl = document.querySelector("#inputSalaryVal");
 
-var slider = document.getElementById('slider');
-
-noUiSlider.create(slider, {
-    start: [20, 80],
-    connect: true,
-    range: {
-        'min': 0,
-        'max': 100
-    }
-});
 var jobTypeEl = document.querySelector("#inputSelect");
 var jobCityEl = document.querySelector("#inputCity");
 var searchBtnEl = document.querySelector("#searchBtn");

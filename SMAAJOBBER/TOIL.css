@@ -112,7 +112,9 @@ nav > ul:nth-child(2) > div:active{
 #jobGrid>div:hover{
     background:#ccc;
 }
-
+.jobListing > h2{
+    height:7vh;
+}
 .jobListing > img{
     width:100%;
     height:70%;
